@@ -1,4 +1,4 @@
-# intro-portfolio_kai
+# intro-portfolio
 this is my (unfinished) portfolio project)
 you should use this because it's a cool thing
 I stole the banana idea from https://www.danielspatzek.com/home/, and also the fonts
