@@ -1,0 +1,110 @@
+@font-face {
+    font-family: 'dnlsptzk';
+    src: url('/fonts/dnlsptzk.woff2') format('woff2'),
+        url('/fonts/dnlsptzk.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'sang-bleu';
+    src: url('/fonts/SangBleuOGSerif-Regular-WebS.woff2') format('woff2'),
+        url('/fonts/SangBleuOGSerif-Regular-WebS.woff') format('woff');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'suisse-book';
+    src: url('/fonts/SuisseIntl-Book-WebM.woff2') format('woff2'),
+        url('/fonts/SuisseIntl-Book-WebM.woff') format('woff');
+    font-display: swap;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    font-family: sans-serif;
+}
+
+#render-container {
+  width: 100vw;
+  height: 150vh;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+#title {
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'sang-bleu', sans-serif;
+    opacity: 0;
+    animation: glideInFromTop 1.5s ease-out forwards;
+    font-size: 2rem;
+}
+
+.hero {
+    height: 100vh;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.content {
+    padding: 50px;
+    background: #fff;
+}
+
+.section {
+    margin-bottom: 50px;
+    padding: 20px;
+    background: #e0e0e0;
+    border-radius: 8px;
+}
+
+
+  .circle-follow {
+    width: 75px;
+    height: 75px;
+    border: 3px solid black;
+    border-radius: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: background-color 0.3s, transform 0.3s, width 0.3s, height 0.3s;
+    mix-blend-mode: difference;
+    background-color: transparent;
+    filter: invert(100%);
+    z-index: 10000000;
+  }
+  
+  .circle-follow:hover {
+    filter: grayscale(100%);
+  }
+  
+  @keyframes glideInFromTop {
+    0% {
+      opacity: 0;
+      transform: translateY(-100vh);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeInEffect {
+    0% {
+      opacity: 0;
+    }
+    25% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }

@@ -1,2 +1,6 @@
-# intro-portfolio_kai
- great.
+- banana flys across the screen
+- Infinite scrolling
+- particles
+- Cool mouse effect
+- Add embeddings of previous projects with an arrow maybe?
+- Try cool effects? idk
