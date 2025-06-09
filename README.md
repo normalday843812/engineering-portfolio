@@ -5,7 +5,7 @@ I stole the banana idea from https://www.danielspatzek.com/home/, and also the f
 I also stole the cursor thing from myself and I have no idea where I found that banana model, actually I think it's from: https://www.turbosquid.com/3d-models/fruit-food-banana-3d-1610134
 
 things to  implement:
-- banana flys across the screen
+- ~~banana flys across the screen~~
 - Infinite scrolling
 - particles
 - Cool mouse effect

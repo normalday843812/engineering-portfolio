@@ -1,24 +1,8 @@
 window.onload = function () {
     const textElement = document.getElementById('title');
-    const textStages = [
-        "Kai's Portfolio",
-        "Kai' Portfolio",
-        "Kai Portfolio",
-        "Ka Portfolio",
-        "K Portfolio",
-        " Portfolio",
-        "M Portfolio",
-        "My Portfolio",
-    ];
-    const delay = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        500,
-    ];
+    const finalText = "Kai's Engineering Portfolio"
+    const textStages = [...finalText].map((_, i) => finalText.slice(0, i + 1));
+    const delay = [...finalText].map((_, i, arr) => i === arr.length - 1 ? 500 : 0);
     let currentStage = 0;
 
     function typeText() {
