@@ -1,21 +1,18 @@
 @font-face {
     font-family: 'dnlsptzk';
-    src: url('/fonts/dnlsptzk.woff2') format('woff2'),
-        url('/fonts/dnlsptzk.woff') format('woff');
+    src: url('/fonts/dnlsptzk.woff2') format('woff2');
     font-display: swap;
 }
 
 @font-face {
     font-family: 'sang-bleu';
-    src: url('/fonts/SangBleuOGSerif-Regular-WebS.woff2') format('woff2'),
-        url('/fonts/SangBleuOGSerif-Regular-WebS.woff') format('woff');
+    src: url('/fonts/SangBleuOGSerif-Regular-WebS.woff2') format('woff2');
     font-display: swap;
 }
 
 @font-face {
     font-family: 'suisse-book';
-    src: url('/fonts/SuisseIntl-Book-WebM.woff2') format('woff2'),
-        url('/fonts/SuisseIntl-Book-WebM.woff') format('woff');
+    src: url('/fonts/SuisseIntl-Book-WebM.woff2') format('woff2');
     font-display: swap;
 }
 
