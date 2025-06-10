@@ -36,6 +36,58 @@ body, html {
   left: 0;
 }
 
+#navbar {
+  position: sticky;
+  top: 0;
+  background-color: transparent;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  z-index: 1000;
+}
+
+/* Navbar links */
+#navbar a {
+  display: block;
+  position: relative;
+  width: 120px;
+  padding: 14px 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+#navbar a::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #888;
+  transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+#navbar a.active::before {
+  top: 0;
+}
+
+#navbar a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#navbar a.active {
+  color: white;
+}
+
 .about-me-container {
   display: flex;
   flex-wrap: wrap;

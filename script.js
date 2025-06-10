@@ -25,6 +25,54 @@ window.onload = function () {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Navbar scroll-based active state
+    const navLinks = document.querySelectorAll('#navbar a');
+    const sections = document.querySelectorAll('section, .hero, .section[id]');
+    
+    function updateActiveLink() {
+        const scrollPos = window.scrollY + 100; // Offset for better detection
+        
+        sections.forEach(section => {
+            const top = section.offsetTop;
+            const height = section.offsetHeight;
+            const id = section.getAttribute('id');
+            
+            if (scrollPos >= top && scrollPos < top + height && id) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${id}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    }
+    
+    // Update on scroll
+    window.addEventListener('scroll', updateActiveLink);
+    
+    // Update on load
+    updateActiveLink();
+    
+    // Smooth scroll behavior for nav links
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                const offset = 80; // Navbar height offset
+                const targetPosition = targetElement.offsetTop - offset;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
     const circle = document.createElement('div');
     circle.className = 'circle-follow';
     document.body.appendChild(circle);

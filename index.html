@@ -11,44 +11,49 @@
 </head>
 
 <body>
-    <div class="hero">
-        <div class="info">
-          <div id="title" style="opacity: 0;"></div>
-          scroll
-        </div>
-      </div>
-
-    <div class="content">
-        <div class="section about-me">
-        <div class="about-me-container">
-          <img src="./images/image_of_me.png" alt="me" class="about-photo">
-          <div class="about-text">
-            <h1>About Me</h1>
-            <p>I'm Kai Stewart</p>
-          </div>
-        </div>
-      </div>
-        <div class="section"></div>
-        <div class="section"></div>
+  <div id="navbar">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+  </div>
+  <div class="hero" id="home">
+    <div class="info">
+      <div id="title" style="opacity: 0;"></div>
+      scroll
     </div>
+  </div>
 
-    <div id="render-container" style="position: relative;">
-      <div class="banana" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
-        <div id="stolen">banana</div> 
-        <!-- not the code -->
+  <div class="content">
+      <div class="section about-me" id="about">
+      <div class="about-me-container">
+        <img src="./images/image_of_me.png" alt="me" class="about-photo">
+        <div class="about-text">
+          <h1>Kai Stewart</h1>
+          <p>As an engineering I student, I hope to become more experienced in the parts of engineering that I am not comfortable with, especially physical fabrication. In the future, I hope to use my experience to aid in the development and deploying of new devices and software.</p>
+        </div>
+      </div>
+    </div>
+      <div class="section" id="projects">
+        <h2>Projects</h2>
+        <p>Wokring on it</p>
       </div>
   </div>
 
+  <div id="render-container" style="position: relative;">
+    <div class="banana" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
+      <div id="stolen">banana</div> 
+      <!-- not the code -->
+    </div>
+  </div>
+
   <footer>
-    hi
+    This is a footer. I plan to put stuff here
   </footer>
     
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
-    <script src="./banana.js"></script>
-    
-    
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
+  <script src="./banana.js"></script>
 </body>
 
 </html>
