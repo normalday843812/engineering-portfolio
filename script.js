@@ -15,7 +15,7 @@ window.onload = function () {
     }
 
     textElement.style.opacity = 1;
-    textElement.style.animation = 'glideInFromTop 1.5s ease-out, fadeInEffect 1.5s forwards';
+    textElement.style.animation = 'glideInFromTop 1.5s ease-out forwards';
 
     textElement.addEventListener('animationend', (event) => {
         if (event.animationName === 'glideInFromTop') {

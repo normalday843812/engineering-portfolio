@@ -1,18 +1,18 @@
 @font-face {
     font-family: 'dnlsptzk';
-    src: url('/fonts/dnlsptzk.woff2') format('woff2');
+    src: url('./fonts/dnlsptzk.woff2') format('woff2');
     font-display: swap;
 }
 
 @font-face {
     font-family: 'sang-bleu';
-    src: url('/fonts/SangBleuOGSerif-Regular-WebS.woff2') format('woff2');
+    src: url('./fonts/SangBleuOGSerif-Regular-WebS.woff2') format('woff2');
     font-display: swap;
 }
 
 @font-face {
     font-family: 'suisse-book';
-    src: url('/fonts/SuisseIntl-Book-WebM.woff2') format('woff2');
+    src: url('./fonts/SuisseIntl-Book-WebM.woff2') format('woff2');
     font-display: swap;
 }
 
@@ -34,6 +34,7 @@ body, html {
 }
 
 #navbar {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   background-color: transparent;
@@ -110,6 +111,7 @@ body, html {
     margin-bottom: 20px;
     font-family: 'sang-bleu', sans-serif;
     opacity: 0;
+    -webkit-animation: glideInFromTop 1.5s ease-out forwards;
     animation: glideInFromTop 1.5s ease-out forwards;
     font-size: 2rem;
 }
@@ -156,6 +158,19 @@ body, html {
     filter: grayscale(100%);
   }
   
+  @-webkit-keyframes glideInFromTop {
+    0% {
+      opacity: 0;
+      -webkit-transform: translateY(-100vh);
+      transform: translateY(-100vh);
+    }
+    100% {
+      opacity: 1;
+      -webkit-transform: translateY(0);
+      transform: translateY(0);
+    }
+  }
+  
   @keyframes glideInFromTop {
     0% {
       opacity: 0;
@@ -164,6 +179,18 @@ body, html {
     100% {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+  
+  @-webkit-keyframes fadeInEffect {
+    0% {
+      opacity: 0;
+    }
+    25% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
   
