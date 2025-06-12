@@ -1,763 +1,768 @@
-diff --git a/.DS_Store b/.DS_Store
-index d1fff24..55fc073 100644
-Binary files a/.DS_Store and b/.DS_Store differ
-diff --git a/banana.js b/banana.js
-index 4df099c..67e6ee9 100644
---- a/banana.js
-+++ b/banana.js
-@@ -1,80 +1,120 @@
--document.addEventListener('DOMContentLoaded', () => {
--    let scrollPosition = 0;
--    let canvasVisible = false;
--    let startScroll = 0;
--    let scrollMax = 0;
-+(function () {
-+  'use strict';
- 
-+  // Wait for the render container to come into view before initialising THREE.js
-+  const container = document.getElementById('render-container');
-+  if (!container) return;
-+
-+  // Use IntersectionObserver to lazily create the scene the first time the
-+  // banana section is at least 25% visible.
-+  const observer = new IntersectionObserver(
-+    (entries) => {
-+      entries.forEach((entry) => {
-+        if (entry.isIntersecting) {
-+          observer.disconnect();
-+          initScene();
-+        }
-+      });
-+    },
-+    { threshold: 0.25 },
-+  );
-+
-+  observer.observe(container);
-+
-+  function initScene() {
-     const scene = new THREE.Scene();
--    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
--    const renderer = new THREE.WebGLRenderer();
--    const renderContainer = document.getElementById('render-container');
--    renderer.setSize(renderContainer.offsetWidth, renderContainer.offsetHeight);
--    renderContainer.appendChild(renderer.domElement);
-+    const camera = new THREE.PerspectiveCamera(
-+      60,
-+      container.clientWidth / container.clientHeight,
-+      0.1,
-+      1000,
-+    );
-+    camera.position.z = 5;
- 
--    let banana;
-+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-+    renderer.setSize(container.clientWidth, container.clientHeight);
-+    renderer.setPixelRatio(window.devicePixelRatio);
-+    container.appendChild(renderer.domElement);
-+
-+    // Lighting ------------------------------------------------------------
-+    const bottomLight = new THREE.PointLight(0xffa500, 2, 100);
-+    bottomLight.position.set(0, 0, 0);
-+    scene.add(bottomLight);
-+
-+    const hemiLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-+    hemiLight.position.set(0, 2, 0);
-+    scene.add(hemiLight);
- 
-+    // Banana mesh ---------------------------------------------------------
-+    let banana;
-     const mtlLoader = new THREE.MTLLoader();
-     mtlLoader.load('./banana/Banana.mtl', (materials) => {
--        materials.preload();
--        const objLoader = new THREE.OBJLoader();
--        objLoader.setMaterials(materials);
--        objLoader.load('./banana/Banana.obj', (object) => {
--            object.scale.set(100, 100, 100);
--            banana = object;
--            scene.add(banana);
--        });
-+      materials.preload();
-+      const objLoader = new THREE.OBJLoader();
-+      objLoader.setMaterials(materials);
-+      objLoader.load('./banana/Banana.obj', (object) => {
-+        object.scale.set(100, 100, 100);
-+        banana = object;
-+        scene.add(banana);
-+      });
-     });
--    camera.position.z = 5;
- 
--    const softBottomLight = new THREE.PointLight(0xffa500, 2, 100);
--    softBottomLight.position.set(0, 0, 0);
--    scene.add(softBottomLight);
-+    // Animation loop ------------------------------------------------------
-+    let rafId;
-+    const animate = () => {
-+      rafId = requestAnimationFrame(animate);
-+      if (banana) {
-+        banana.rotation.z += 0.01;
-+        banana.rotation.y = 1;
-+      }
-+      renderer.render(scene, camera);
-+    };
-+    animate();
- 
--    const softTopLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
--    softTopLight.position.set(0, 2, 0);
--    scene.add(softTopLight);
-+    // Scroll progress controls banana trajectory -------------------------
-+    let startScroll = null;
- 
--    function animate() {
--        requestAnimationFrame(animate);
--        if (banana) {
--            banana.rotation.z += 0.01;
--            banana.rotation.y = 1;
--        }
--        renderer.render(scene, camera);
-+    const handleScroll = () => {
-+      if (startScroll === null) startScroll = window.scrollY;
-+
-+      const maxScroll =
-+        document.body.scrollHeight - window.innerHeight - startScroll;
-+      const effectiveScroll = Math.max(0, window.scrollY - startScroll);
-+      const progress = Math.min(1, effectiveScroll / maxScroll);
-+      updateBananaPosition(progress);
-+    };
-+
-+    function updateBananaPosition(progress) {
-+      if (!banana) return;
-+      const startPos = new THREE.Vector3(-10, 10, -10);
-+      const midPos = new THREE.Vector3(-2, 2, -5);
-+      const endPos = new THREE.Vector3(0, -2, 1);
-+
-+      if (progress < 0.5) {
-+        banana.position.lerpVectors(startPos, midPos, progress / 0.5);
-+      } else {
-+        banana.position.lerpVectors(midPos, endPos, (progress - 0.5) / 0.5);
-+      }
-     }
- 
--    function setBananaPosition(progress) {
--        if (banana) {
--            const startPosition = new THREE.Vector3(-10, 10, -10);
--            const midPosition = new THREE.Vector3(-2, 2, -5);
--            const endPosition = new THREE.Vector3(0, -2, 1);
--
--            if (progress < 0.5) {
--                let segmentProgress = progress / 0.5;
--                banana.position.lerpVectors(startPosition, midPosition, segmentProgress);
--            } else {
--                let segmentProgress = (progress - 0.5) / 0.5;
--                banana.position.lerpVectors(midPosition, endPosition, segmentProgress);
--            }
--        }
-+    window.addEventListener('scroll', handleScroll, { passive: true });
-+
-+    // Resize handler ------------------------------------------------------
-+    function onResize() {
-+      camera.aspect = container.clientWidth / container.clientHeight;
-+      camera.updateProjectionMatrix();
-+      renderer.setSize(container.clientWidth, container.clientHeight);
-     }
- 
--    window.addEventListener('scroll', () => {
--        if (!canvasVisible) {
--            const canvasPosition = renderContainer.getBoundingClientRect().top;
--            if (canvasPosition <= window.innerHeight) {
--                canvasVisible = true;
--                startScroll = window.scrollY;
--                scrollMax = document.body.scrollHeight - window.innerHeight;
--            }
--            return;
--        }
-+    window.addEventListener('resize', onResize);
- 
--        scrollPosition = window.scrollY;
--        const effectiveScroll = scrollPosition - startScroll;
--        const progress = Math.max(0, Math.min(1, effectiveScroll / scrollMax));
--        setBananaPosition(progress);
-+    // Pause rendering when the tab is hidden -----------------------------
-+    document.addEventListener('visibilitychange', () => {
-+      if (document.hidden) {
-+        cancelAnimationFrame(rafId);
-+      } else {
-+        animate();
-+      }
-     });
--
--    animate();
--});
-\ No newline at end of file
-+  }
-+})();
-diff --git a/index.html b/index.html
-index ca42be0..948503b 100644
---- a/index.html
-+++ b/index.html
-@@ -1,59 +1,78 @@
- <!DOCTYPE html>
--<html>
--<head>
--    <link rel="stylesheet" href="styles.css?v=1.1">
--    <title>Kai Stewart - Engineering I</title>
--    <!-- favicon -->
--    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
--    <script src="./script.js"></script>
--    <script src="./p5.js"></script>
--    <script src="./particles.js"></script>
--</head>
--
--<body>
--  <div id="navbar">
--    <a href="#home">Home</a>
--    <a href="#about">About</a>
--    <a href="#projects">Projects</a>
--  </div>
--  <div class="hero" id="home">
--    <div class="info">
--      <div id="title" style="opacity: 0;"></div>
--      scroll
--    </div>
--  </div>
--
--  <div class="content">
--      <div class="section about-me" id="about">
--      <div class="about-me-container">
--        <img src="./images/image_of_me.png" alt="me" class="about-photo">
--        <div class="about-text">
--          <h1>Kai Stewart</h1>
--          <p>As an engineering I student, I hope to become more experienced in the parts of engineering that I am not comfortable with, especially physical fabrication. In the future, I hope to use my experience to aid in the development and deploying of new devices and software.</p>
-+<html lang="en">
-+  <head>
-+    <meta charset="utf-8" />
-+    <meta name="viewport" content="width=device-width, initial-scale=1" />
-+
-+    <title>Kai Stewart – Engineering Portfolio</title>
-+
-+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon" />
-+    <link rel="manifest" href="./manifest.json" />
-+
-+    <!-- Styles -->
-+    <link rel="stylesheet" href="styles.css?v=1.2" />
-+  </head>
-+
-+  <body>
-+    <header id="navbar">
-+      <nav aria-label="Primary">
-+        <a href="#home">Home</a>
-+        <a href="#about">About</a>
-+        <a href="#projects">Projects</a>
-+      </nav>
-+    </header>
-+
-+    <main>
-+      <section class="hero" id="home" tabindex="-1">
-+        <div class="info">
-+          <h1 id="title" style="opacity: 0">Engineering Portfolio</h1>
-+          <span class="scroll-hint">scroll</span>
-         </div>
--      </div>
--    </div>
--      <div class="section" id="projects">
-+      </section>
-+
-+      <section class="about-me section" id="about" tabindex="-1">
-+        <div class="about-me-container">
-+          <img
-+            src="./images/image_of_me.png"
-+            alt="Portrait of Kai Stewart"
-+            class="about-photo"
-+          />
-+          <div class="about-text">
-+            <h2>Kai Stewart</h2>
-+            <p>
-+              As an Engineering I student, I hope to become more experienced in the
-+              parts of engineering that I am not comfortable with, especially
-+              physical fabrication. In the future, I hope to use my experience
-+              to aid in the development and deployment of new devices and
-+              software.
-+            </p>
-+          </div>
-+        </div>
-+      </section>
-+
-+      <section class="section" id="projects" tabindex="-1">
-         <h2>Projects</h2>
--        <p>Wokring on it</p>
-+        <p>Working on it…</p>
-+      </section>
-+    </main>
-+
-+    <section id="render-container">
-+      <div class="banana-overlay">
-+        <div id="stolen">banana</div>
-       </div>
--  </div>
--
--  <div id="render-container" style="position: relative;">
--    <div class="banana" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
--      <div id="stolen">banana</div> 
--      <!-- not the code -->
--    </div>
--  </div>
--
--  <footer>
--    This is a footer. I plan to put stuff here
--  </footer>
--    
--  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
--  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
--  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
--  <script src="./banana.js"></script>
--</body>
-+    </section>
-+
-+    <footer>
-+      <small>This is a footer. I plan to put stuff here</small>
-+    </footer>
-+
-+    <!-- JavaScript – use defer so parsing isn’t blocked -->
-+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
-+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js" defer></script>
-+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js" defer></script>
- 
-+    <script src="./script.js" defer></script>
-+    <!-- banana.js initialises itself lazily when the banana container enters view -->
-+    <script src="./banana.js" defer></script>
-+  </body>
- </html>
-\ No newline at end of file
-diff --git a/script.js b/script.js
-index c9b9093..9866810 100644
---- a/script.js
-+++ b/script.js
-@@ -1,78 +1,127 @@
--window.onload = function () {
--    const textElement = document.getElementById('title');
--    const finalText = "Kai's Engineering Portfolio"
--    const textStages = [...finalText].map((_, i) => finalText.slice(0, i + 1));
--    const delay = [...finalText].map((_, i, arr) => i === arr.length - 1 ? 1 : 0);
--    let currentStage = 0;
--
--    function typeText() {
--        if (currentStage < textStages.length) {
--            textElement.textContent = textStages[currentStage];
--            let totalDelay = 250 + delay[currentStage];
--            setTimeout(typeText, totalDelay);
--            currentStage++;
--        }
-+(() => {
-+  'use strict';
-+
-+
-+  const INITIAL_TEXT = 'Engineering Portfolio';
-+  const FINAL_TEXT = "Kai's Engineering Portfolio";
-+  const TYPE_SPEED = 250; // ms per keystroke
-+
-+  function generateStages(initial, final) {
-+    if (final.endsWith(initial)) {
-+      const prefix = final.slice(0, final.length - initial.length);
-+      const stages = [initial];
-+      for (let i = 1; i <= prefix.length; i += 1) {
-+        stages.push(prefix.slice(0, i) + initial);
-+      }
-+      return stages;
-     }
- 
--    textElement.style.opacity = 1;
--    textElement.style.animation = 'glideInFromTop 1.5s ease-out forwards';
-+    const stages = [];
-+    for (let i = 1; i <= final.length; i += 1) {
-+      stages.push(final.slice(0, i));
-+    }
-+    return stages;
-+  }
- 
--    textElement.addEventListener('animationend', (event) => {
--        if (event.animationName === 'glideInFromTop') {
--            typeText();
--        }
-+  function runTitleAnimation() {
-+    const textElement = document.getElementById('title');
-+    if (!textElement) return;
-+
-+    const stages = generateStages(INITIAL_TEXT, FINAL_TEXT);
-+    let current = 0;
-+
-+    const typeNext = () => {
-+      if (current >= stages.length) return;
-+      textElement.textContent = stages[current];
-+      current += 1;
-+      setTimeout(typeNext, TYPE_SPEED);
-+    };
-+
-+    textElement.style.opacity = '1';
-+    textElement.addEventListener('animationend', (e) => {
-+      if (e.animationName === 'glideInFromTop') {
-+        typeNext();
-+      }
-     });
--};
-+  }
- 
--document.addEventListener('DOMContentLoaded', () => {
--    // Navbar scroll-based active state
-+  function initNavHighlight() {
-     const navLinks = document.querySelectorAll('#navbar a');
--    const sections = document.querySelectorAll('section, .hero, .section[id]');
--    
--    function updateActiveLink() {
--        const scrollPos = window.scrollY + 100; // Offset for better detection
--        
--        sections.forEach(section => {
--            const top = section.offsetTop;
--            const height = section.offsetHeight;
-+    const sections = Array.from(
-+      document.querySelectorAll('section[id]'),
-+    );
-+
-+    if (!('IntersectionObserver' in window)) {
-+      // Fallback to scroll-based if IO not supported
-+      const fallback = () => {
-+        const offset = window.scrollY + 100;
-+        sections.forEach((section) => {
-+          const { top, height } = section.getBoundingClientRect();
-+          const absTop = top + window.scrollY;
-+          if (offset >= absTop && offset < absTop + height) {
-             const id = section.getAttribute('id');
--            
--            if (scrollPos >= top && scrollPos < top + height && id) {
--                navLinks.forEach(link => {
--                    link.classList.remove('active');
--                    if (link.getAttribute('href') === `#${id}`) {
--                        link.classList.add('active');
--                    }
--                });
--            }
-+            navLinks.forEach((l) => {
-+              l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
-+            });
-+          }
-         });
-+      };
-+      window.addEventListener('scroll', fallback, { passive: true });
-+      fallback();
-+      return;
-     }
--    
--    // Update on scroll
--    window.addEventListener('scroll', updateActiveLink);
--    
--    // Update on load
--    updateActiveLink();
--    
--    // Smooth scroll behavior for nav links
--    navLinks.forEach(link => {
--        link.addEventListener('click', (e) => {
--            e.preventDefault();
--            const targetId = link.getAttribute('href').substring(1);
--            const targetElement = document.getElementById(targetId);
--            
--            if (targetElement) {
--                const offset = 80; // Navbar height offset
--                const targetPosition = targetElement.offsetTop - offset;
--                
--                window.scrollTo({
--                    top: targetPosition,
--                    behavior: 'smooth'
--                });
--            }
-+
-+    const observer = new IntersectionObserver(
-+      (entries) => {
-+        // Determine the entry closest to top that is intersecting
-+        let topMost = null;
-+        entries.forEach((entry) => {
-+          if (!entry.isIntersecting) return;
-+          if (
-+            !topMost ||
-+            entry.boundingClientRect.top < topMost.boundingClientRect.top
-+          ) {
-+            topMost = entry;
-+          }
-         });
-+
-+        if (topMost) {
-+          const id = topMost.target.id;
-+          navLinks.forEach((l) => {
-+            l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
-+          });
-+        }
-+      },
-+      {
-+        root: null,
-+        rootMargin: '-50% 0px -50% 0px', // centre of viewport
-+        threshold: 0,
-+      },
-+    );
-+
-+    sections.forEach((section) => observer.observe(section));
-+  }
-+
-+  function initSmoothScroll() {
-+    const navLinks = document.querySelectorAll('#navbar a');
-+    navLinks.forEach((link) => {
-+      link.addEventListener('click', (e) => {
-+        e.preventDefault();
-+        const targetId = link.getAttribute('href').substring(1);
-+        const targetElement = document.getElementById(targetId);
-+        if (!targetElement) return;
-+
-+        const offset = 80;
-+        const top = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
-+        window.scrollTo({ top, behavior: 'smooth' });
-+      });
-     });
--    
-+  }
-+
-+  // Cursor follower
-+  function initCursorFollower() {
-+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-+
-     const circle = document.createElement('div');
-     circle.className = 'circle-follow';
-     document.body.appendChild(circle);
-@@ -81,71 +130,54 @@ document.addEventListener('DOMContentLoaded', () => {
-     let targetY = 0;
-     let currentX = window.innerWidth / 2;
-     let currentY = window.innerHeight / 2;
--    const easeFactor = 0.25;
--    const initialEaseFactor = 0.05;
--    let isInitialMove = true;
-+    const EASE = 0.25;
-+
-+    let rafId;
-+
-+    function update() {
-+      const dx = targetX - currentX;
-+      const dy = targetY - currentY;
-+      currentX += dx * EASE;
-+      currentY += dy * EASE;
-+      circle.style.left = `${currentX}px`;
-+      circle.style.top = `${currentY}px`;
-+      rafId = requestAnimationFrame(update);
-+    }
- 
-     document.addEventListener('mousemove', (e) => {
--        targetX = e.clientX;
--        targetY = e.clientY;
--        if (isInitialMove) {
--            startLoadingAnimation();
--            isInitialMove = false;
--        }
-+      targetX = e.clientX;
-+      targetY = e.clientY;
-     });
- 
--    function updateCirclePosition() {
--        const dx = targetX - currentX;
--        const dy = targetY - currentY;
--
--        const currentEaseFactor = isInitialMove ? initialEaseFactor : easeFactor;
--
--        currentX += dx * currentEaseFactor;
--        currentY += dy * currentEaseFactor;
--
--        circle.style.left = `${currentX}px`;
--        circle.style.top = `${currentY}px`;
--
--        requestAnimationFrame(updateCirclePosition);
--    }
--
--    function startLoadingAnimation() {
--        let start = null;
--        const duration = 1000;
--
--        function loadingStep(timestamp) {
--            if (!start) start = timestamp;
--            const progress = (timestamp - start) / duration;
--
--            const angle = 2 * Math.PI * progress;
--            circle.style.clipPath = `polygon(50% 50%, ${50 + 50 * Math.cos(angle)}% ${50 + 50 * Math.sin(angle)}%, 50% 50%)`;
--
--            if (progress < 1) {
--                requestAnimationFrame(loadingStep);
--            } else {
--                circle.style.clipPath = 'none';
--                updateCirclePosition();
--            }
--        }
--
--        requestAnimationFrame(loadingStep);
--    }
-+    // Pause animation when tab hidden
-+    document.addEventListener('visibilitychange', () => {
-+      if (document.hidden) {
-+        cancelAnimationFrame(rafId);
-+      } else {
-+        rafId = requestAnimationFrame(update);
-+      }
-+    });
- 
--    circle.style.position = 'fixed';
--    circle.style.left = '50%';
--    circle.style.top = '50%';
--    circle.style.transform = 'translate(-50%, -50%)';
--    circle.style.pointerEvents = 'none';
--    circle.style.transition = 'background-color 0.3s, transform 0.3s';
--
--    document.querySelectorAll('a, button, input').forEach(elem => {
--        elem.addEventListener('mouseenter', () => {
--            circle.style.transform = 'translate(-50%, -50%) scale(0.35)';
--            circle.style.backgroundColor = 'rgba(0, 0, 0, 1)';
--        });
--        elem.addEventListener('mouseleave', () => {
--            circle.style.transform = 'translate(-50%, -50%) scale(1)';
--            circle.style.backgroundColor = 'transparent';
--        });
-+    // Start
-+    rafId = requestAnimationFrame(update);
-+
-+    // Shrink on interactive elements
-+    document.querySelectorAll('a, button, input').forEach((elem) => {
-+      elem.addEventListener('mouseenter', () => {
-+        circle.style.transform = 'translate(-50%, -50%) scale(0.35)';
-+        circle.style.backgroundColor = 'rgba(0, 0, 0, 1)';
-+      });
-+      elem.addEventListener('mouseleave', () => {
-+        circle.style.transform = 'translate(-50%, -50%) scale(1)';
-+        circle.style.backgroundColor = 'transparent';
-+      });
-     });
--});
-\ No newline at end of file
-+  }
-+
-+  document.addEventListener('DOMContentLoaded', () => {
-+    runTitleAnimation();
-+    initNavHighlight();
-+    initSmoothScroll();
-+    initCursorFollower();
-+  });
-+})();
-diff --git a/styles.css b/styles.css
-index 229f9bf..1559a7b 100644
---- a/styles.css
-+++ b/styles.css
-@@ -23,6 +23,16 @@ body, html {
-     line-height: 1.6;
-     color: #333;
-     font-family: sans-serif;
-+    background: #fff;
-+    isolation: isolate; /* ensure mix-blend-mode works consistently */
-+}
-+
-+:root {
-+  --primary-bg: #ffffff;
-+  --accent-bg: #e0e0e0;
-+  --text-color: #333333;
-+  --navbar-link-width: 120px;
-+  --transition-fast: 0.3s;
- }
- 
- #render-container {
-@@ -33,23 +43,40 @@ body, html {
-   left: 0;
- }
- 
-+.banana-overlay {
-+  position: absolute;
-+  inset: 0;
-+  display: flex;
-+  justify-content: center;
-+  align-items: center;
-+  color: white;
-+  pointer-events: none;
-+}
-+
- #navbar {
--  position: -webkit-sticky;
--  position: sticky;
-+  position: fixed; /* overlay – no layout shift */
-   top: 0;
--  background-color: transparent;
-+  right: 0;
-+  left: 0;
-+  background: transparent;
-   padding: 20px;
-   display: flex;
--  justify-content: center;
-+  justify-content: flex-end;
-+  z-index: 2000; /* below cursor, above content */
-+  pointer-events: none; /* allow nav itself to receive events via child */
-+}
-+
-+#navbar nav {
-+  display: flex;
-   gap: 20px;
--  z-index: 1000;
-+  pointer-events: auto; /* re-enable pointer events for the links */
- }
- 
- /* Navbar links */
- #navbar a {
-   display: block;
-   position: relative;
--  width: 120px;
-+  width: var(--navbar-link-width);
-   padding: 14px 20px;
-   text-align: center;
-   text-decoration: none;
-@@ -58,7 +85,7 @@ body, html {
-   border-radius: 8px;
-   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-   overflow: hidden;
--  transition: all 0.3s ease;
-+  transition: all var(--transition-fast) ease;
- }
- 
- #navbar a::before {
-@@ -68,6 +95,7 @@ body, html {
-   left: 0;
-   width: 100%;
-   height: 100%;
-+  color: white;
-   background-color: #888;
-   transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-   z-index: -1;
-@@ -84,6 +112,12 @@ body, html {
- 
- #navbar a.active {
-   color: white;
-+  background-color: transparent; /* allow ::before bg to show */
-+}
-+
-+#navbar nav {
-+  display: flex;
-+  gap: 20px;
- }
- 
- .about-me-container {
-@@ -151,8 +185,19 @@ body, html {
-     mix-blend-mode: difference;
-     background-color: transparent;
-     filter: invert(100%);
--    z-index: 10000000;
-+    z-index: 2147483647;
-+  }
-+
-+@media (prefers-reduced-motion: reduce) {
-+  .circle-follow {
-+    display: none;
-+  }
-+  * {
-+    animation-duration: 0.01ms !important;
-+    animation-iteration-count: 1 !important;
-+    transition-duration: 0.01ms !important;
-   }
-+}
-   
-   .circle-follow:hover {
-     filter: grayscale(100%);
+diff --git a/hi.txt b/hi.txt
+index b9dd492..e69de29 100644
+--- a/hi.txt
++++ b/hi.txt
+@@ -1,763 +0,0 @@
+-diff --git a/.DS_Store b/.DS_Store
+-index d1fff24..55fc073 100644
+-Binary files a/.DS_Store and b/.DS_Store differ
+-diff --git a/banana.js b/banana.js
+-index 4df099c..67e6ee9 100644
+---- a/banana.js
+-+++ b/banana.js
+-@@ -1,80 +1,120 @@
+--document.addEventListener('DOMContentLoaded', () => {
+--    let scrollPosition = 0;
+--    let canvasVisible = false;
+--    let startScroll = 0;
+--    let scrollMax = 0;
+-+(function () {
+-+  'use strict';
+- 
+-+  // Wait for the render container to come into view before initialising THREE.js
+-+  const container = document.getElementById('render-container');
+-+  if (!container) return;
+-+
+-+  // Use IntersectionObserver to lazily create the scene the first time the
+-+  // banana section is at least 25% visible.
+-+  const observer = new IntersectionObserver(
+-+    (entries) => {
+-+      entries.forEach((entry) => {
+-+        if (entry.isIntersecting) {
+-+          observer.disconnect();
+-+          initScene();
+-+        }
+-+      });
+-+    },
+-+    { threshold: 0.25 },
+-+  );
+-+
+-+  observer.observe(container);
+-+
+-+  function initScene() {
+-     const scene = new THREE.Scene();
+--    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+--    const renderer = new THREE.WebGLRenderer();
+--    const renderContainer = document.getElementById('render-container');
+--    renderer.setSize(renderContainer.offsetWidth, renderContainer.offsetHeight);
+--    renderContainer.appendChild(renderer.domElement);
+-+    const camera = new THREE.PerspectiveCamera(
+-+      60,
+-+      container.clientWidth / container.clientHeight,
+-+      0.1,
+-+      1000,
+-+    );
+-+    camera.position.z = 5;
+- 
+--    let banana;
+-+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+-+    renderer.setSize(container.clientWidth, container.clientHeight);
+-+    renderer.setPixelRatio(window.devicePixelRatio);
+-+    container.appendChild(renderer.domElement);
+-+
+-+    // Lighting ------------------------------------------------------------
+-+    const bottomLight = new THREE.PointLight(0xffa500, 2, 100);
+-+    bottomLight.position.set(0, 0, 0);
+-+    scene.add(bottomLight);
+-+
+-+    const hemiLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+-+    hemiLight.position.set(0, 2, 0);
+-+    scene.add(hemiLight);
+- 
+-+    // Banana mesh ---------------------------------------------------------
+-+    let banana;
+-     const mtlLoader = new THREE.MTLLoader();
+-     mtlLoader.load('./banana/Banana.mtl', (materials) => {
+--        materials.preload();
+--        const objLoader = new THREE.OBJLoader();
+--        objLoader.setMaterials(materials);
+--        objLoader.load('./banana/Banana.obj', (object) => {
+--            object.scale.set(100, 100, 100);
+--            banana = object;
+--            scene.add(banana);
+--        });
+-+      materials.preload();
+-+      const objLoader = new THREE.OBJLoader();
+-+      objLoader.setMaterials(materials);
+-+      objLoader.load('./banana/Banana.obj', (object) => {
+-+        object.scale.set(100, 100, 100);
+-+        banana = object;
+-+        scene.add(banana);
+-+      });
+-     });
+--    camera.position.z = 5;
+- 
+--    const softBottomLight = new THREE.PointLight(0xffa500, 2, 100);
+--    softBottomLight.position.set(0, 0, 0);
+--    scene.add(softBottomLight);
+-+    // Animation loop ------------------------------------------------------
+-+    let rafId;
+-+    const animate = () => {
+-+      rafId = requestAnimationFrame(animate);
+-+      if (banana) {
+-+        banana.rotation.z += 0.01;
+-+        banana.rotation.y = 1;
+-+      }
+-+      renderer.render(scene, camera);
+-+    };
+-+    animate();
+- 
+--    const softTopLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+--    softTopLight.position.set(0, 2, 0);
+--    scene.add(softTopLight);
+-+    // Scroll progress controls banana trajectory -------------------------
+-+    let startScroll = null;
+- 
+--    function animate() {
+--        requestAnimationFrame(animate);
+--        if (banana) {
+--            banana.rotation.z += 0.01;
+--            banana.rotation.y = 1;
+--        }
+--        renderer.render(scene, camera);
+-+    const handleScroll = () => {
+-+      if (startScroll === null) startScroll = window.scrollY;
+-+
+-+      const maxScroll =
+-+        document.body.scrollHeight - window.innerHeight - startScroll;
+-+      const effectiveScroll = Math.max(0, window.scrollY - startScroll);
+-+      const progress = Math.min(1, effectiveScroll / maxScroll);
+-+      updateBananaPosition(progress);
+-+    };
+-+
+-+    function updateBananaPosition(progress) {
+-+      if (!banana) return;
+-+      const startPos = new THREE.Vector3(-10, 10, -10);
+-+      const midPos = new THREE.Vector3(-2, 2, -5);
+-+      const endPos = new THREE.Vector3(0, -2, 1);
+-+
+-+      if (progress < 0.5) {
+-+        banana.position.lerpVectors(startPos, midPos, progress / 0.5);
+-+      } else {
+-+        banana.position.lerpVectors(midPos, endPos, (progress - 0.5) / 0.5);
+-+      }
+-     }
+- 
+--    function setBananaPosition(progress) {
+--        if (banana) {
+--            const startPosition = new THREE.Vector3(-10, 10, -10);
+--            const midPosition = new THREE.Vector3(-2, 2, -5);
+--            const endPosition = new THREE.Vector3(0, -2, 1);
+--
+--            if (progress < 0.5) {
+--                let segmentProgress = progress / 0.5;
+--                banana.position.lerpVectors(startPosition, midPosition, segmentProgress);
+--            } else {
+--                let segmentProgress = (progress - 0.5) / 0.5;
+--                banana.position.lerpVectors(midPosition, endPosition, segmentProgress);
+--            }
+--        }
+-+    window.addEventListener('scroll', handleScroll, { passive: true });
+-+
+-+    // Resize handler ------------------------------------------------------
+-+    function onResize() {
+-+      camera.aspect = container.clientWidth / container.clientHeight;
+-+      camera.updateProjectionMatrix();
+-+      renderer.setSize(container.clientWidth, container.clientHeight);
+-     }
+- 
+--    window.addEventListener('scroll', () => {
+--        if (!canvasVisible) {
+--            const canvasPosition = renderContainer.getBoundingClientRect().top;
+--            if (canvasPosition <= window.innerHeight) {
+--                canvasVisible = true;
+--                startScroll = window.scrollY;
+--                scrollMax = document.body.scrollHeight - window.innerHeight;
+--            }
+--            return;
+--        }
+-+    window.addEventListener('resize', onResize);
+- 
+--        scrollPosition = window.scrollY;
+--        const effectiveScroll = scrollPosition - startScroll;
+--        const progress = Math.max(0, Math.min(1, effectiveScroll / scrollMax));
+--        setBananaPosition(progress);
+-+    // Pause rendering when the tab is hidden -----------------------------
+-+    document.addEventListener('visibilitychange', () => {
+-+      if (document.hidden) {
+-+        cancelAnimationFrame(rafId);
+-+      } else {
+-+        animate();
+-+      }
+-     });
+--
+--    animate();
+--});
+-\ No newline at end of file
+-+  }
+-+})();
+-diff --git a/index.html b/index.html
+-index ca42be0..948503b 100644
+---- a/index.html
+-+++ b/index.html
+-@@ -1,59 +1,78 @@
+- <!DOCTYPE html>
+--<html>
+--<head>
+--    <link rel="stylesheet" href="styles.css?v=1.1">
+--    <title>Kai Stewart - Engineering I</title>
+--    <!-- favicon -->
+--    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+--    <script src="./script.js"></script>
+--    <script src="./p5.js"></script>
+--    <script src="./particles.js"></script>
+--</head>
+--
+--<body>
+--  <div id="navbar">
+--    <a href="#home">Home</a>
+--    <a href="#about">About</a>
+--    <a href="#projects">Projects</a>
+--  </div>
+--  <div class="hero" id="home">
+--    <div class="info">
+--      <div id="title" style="opacity: 0;"></div>
+--      scroll
+--    </div>
+--  </div>
+--
+--  <div class="content">
+--      <div class="section about-me" id="about">
+--      <div class="about-me-container">
+--        <img src="./images/image_of_me.png" alt="me" class="about-photo">
+--        <div class="about-text">
+--          <h1>Kai Stewart</h1>
+--          <p>As an engineering I student, I hope to become more experienced in the parts of engineering that I am not comfortable with, especially physical fabrication. In the future, I hope to use my experience to aid in the development and deploying of new devices and software.</p>
+-+<html lang="en">
+-+  <head>
+-+    <meta charset="utf-8" />
+-+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+-+
+-+    <title>Kai Stewart – Engineering Portfolio</title>
+-+
+-+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon" />
+-+    <link rel="manifest" href="./manifest.json" />
+-+
+-+    <!-- Styles -->
+-+    <link rel="stylesheet" href="styles.css?v=1.2" />
+-+  </head>
+-+
+-+  <body>
+-+    <header id="navbar">
+-+      <nav aria-label="Primary">
+-+        <a href="#home">Home</a>
+-+        <a href="#about">About</a>
+-+        <a href="#projects">Projects</a>
+-+      </nav>
+-+    </header>
+-+
+-+    <main>
+-+      <section class="hero" id="home" tabindex="-1">
+-+        <div class="info">
+-+          <h1 id="title" style="opacity: 0">Engineering Portfolio</h1>
+-+          <span class="scroll-hint">scroll</span>
+-         </div>
+--      </div>
+--    </div>
+--      <div class="section" id="projects">
+-+      </section>
+-+
+-+      <section class="about-me section" id="about" tabindex="-1">
+-+        <div class="about-me-container">
+-+          <img
+-+            src="./images/image_of_me.png"
+-+            alt="Portrait of Kai Stewart"
+-+            class="about-photo"
+-+          />
+-+          <div class="about-text">
+-+            <h2>Kai Stewart</h2>
+-+            <p>
+-+              As an Engineering I student, I hope to become more experienced in the
+-+              parts of engineering that I am not comfortable with, especially
+-+              physical fabrication. In the future, I hope to use my experience
+-+              to aid in the development and deployment of new devices and
+-+              software.
+-+            </p>
+-+          </div>
+-+        </div>
+-+      </section>
+-+
+-+      <section class="section" id="projects" tabindex="-1">
+-         <h2>Projects</h2>
+--        <p>Wokring on it</p>
+-+        <p>Working on it…</p>
+-+      </section>
+-+    </main>
+-+
+-+    <section id="render-container">
+-+      <div class="banana-overlay">
+-+        <div id="stolen">banana</div>
+-       </div>
+--  </div>
+--
+--  <div id="render-container" style="position: relative;">
+--    <div class="banana" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; color: white;">
+--      <div id="stolen">banana</div> 
+--      <!-- not the code -->
+--    </div>
+--  </div>
+--
+--  <footer>
+--    This is a footer. I plan to put stuff here
+--  </footer>
+--    
+--  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+--  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+--  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
+--  <script src="./banana.js"></script>
+--</body>
+-+    </section>
+-+
+-+    <footer>
+-+      <small>This is a footer. I plan to put stuff here</small>
+-+    </footer>
+-+
+-+    <!-- JavaScript – use defer so parsing isn’t blocked -->
+-+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
+-+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js" defer></script>
+-+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js" defer></script>
+- 
+-+    <script src="./script.js" defer></script>
+-+    <!-- banana.js initialises itself lazily when the banana container enters view -->
+-+    <script src="./banana.js" defer></script>
+-+  </body>
+- </html>
+-\ No newline at end of file
+-diff --git a/script.js b/script.js
+-index c9b9093..9866810 100644
+---- a/script.js
+-+++ b/script.js
+-@@ -1,78 +1,127 @@
+--window.onload = function () {
+--    const textElement = document.getElementById('title');
+--    const finalText = "Kai's Engineering Portfolio"
+--    const textStages = [...finalText].map((_, i) => finalText.slice(0, i + 1));
+--    const delay = [...finalText].map((_, i, arr) => i === arr.length - 1 ? 1 : 0);
+--    let currentStage = 0;
+--
+--    function typeText() {
+--        if (currentStage < textStages.length) {
+--            textElement.textContent = textStages[currentStage];
+--            let totalDelay = 250 + delay[currentStage];
+--            setTimeout(typeText, totalDelay);
+--            currentStage++;
+--        }
+-+(() => {
+-+  'use strict';
+-+
+-+
+-+  const INITIAL_TEXT = 'Engineering Portfolio';
+-+  const FINAL_TEXT = "Kai's Engineering Portfolio";
+-+  const TYPE_SPEED = 250; // ms per keystroke
+-+
+-+  function generateStages(initial, final) {
+-+    if (final.endsWith(initial)) {
+-+      const prefix = final.slice(0, final.length - initial.length);
+-+      const stages = [initial];
+-+      for (let i = 1; i <= prefix.length; i += 1) {
+-+        stages.push(prefix.slice(0, i) + initial);
+-+      }
+-+      return stages;
+-     }
+- 
+--    textElement.style.opacity = 1;
+--    textElement.style.animation = 'glideInFromTop 1.5s ease-out forwards';
+-+    const stages = [];
+-+    for (let i = 1; i <= final.length; i += 1) {
+-+      stages.push(final.slice(0, i));
+-+    }
+-+    return stages;
+-+  }
+- 
+--    textElement.addEventListener('animationend', (event) => {
+--        if (event.animationName === 'glideInFromTop') {
+--            typeText();
+--        }
+-+  function runTitleAnimation() {
+-+    const textElement = document.getElementById('title');
+-+    if (!textElement) return;
+-+
+-+    const stages = generateStages(INITIAL_TEXT, FINAL_TEXT);
+-+    let current = 0;
+-+
+-+    const typeNext = () => {
+-+      if (current >= stages.length) return;
+-+      textElement.textContent = stages[current];
+-+      current += 1;
+-+      setTimeout(typeNext, TYPE_SPEED);
+-+    };
+-+
+-+    textElement.style.opacity = '1';
+-+    textElement.addEventListener('animationend', (e) => {
+-+      if (e.animationName === 'glideInFromTop') {
+-+        typeNext();
+-+      }
+-     });
+--};
+-+  }
+- 
+--document.addEventListener('DOMContentLoaded', () => {
+--    // Navbar scroll-based active state
+-+  function initNavHighlight() {
+-     const navLinks = document.querySelectorAll('#navbar a');
+--    const sections = document.querySelectorAll('section, .hero, .section[id]');
+--    
+--    function updateActiveLink() {
+--        const scrollPos = window.scrollY + 100; // Offset for better detection
+--        
+--        sections.forEach(section => {
+--            const top = section.offsetTop;
+--            const height = section.offsetHeight;
+-+    const sections = Array.from(
+-+      document.querySelectorAll('section[id]'),
+-+    );
+-+
+-+    if (!('IntersectionObserver' in window)) {
+-+      // Fallback to scroll-based if IO not supported
+-+      const fallback = () => {
+-+        const offset = window.scrollY + 100;
+-+        sections.forEach((section) => {
+-+          const { top, height } = section.getBoundingClientRect();
+-+          const absTop = top + window.scrollY;
+-+          if (offset >= absTop && offset < absTop + height) {
+-             const id = section.getAttribute('id');
+--            
+--            if (scrollPos >= top && scrollPos < top + height && id) {
+--                navLinks.forEach(link => {
+--                    link.classList.remove('active');
+--                    if (link.getAttribute('href') === `#${id}`) {
+--                        link.classList.add('active');
+--                    }
+--                });
+--            }
+-+            navLinks.forEach((l) => {
+-+              l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
+-+            });
+-+          }
+-         });
+-+      };
+-+      window.addEventListener('scroll', fallback, { passive: true });
+-+      fallback();
+-+      return;
+-     }
+--    
+--    // Update on scroll
+--    window.addEventListener('scroll', updateActiveLink);
+--    
+--    // Update on load
+--    updateActiveLink();
+--    
+--    // Smooth scroll behavior for nav links
+--    navLinks.forEach(link => {
+--        link.addEventListener('click', (e) => {
+--            e.preventDefault();
+--            const targetId = link.getAttribute('href').substring(1);
+--            const targetElement = document.getElementById(targetId);
+--            
+--            if (targetElement) {
+--                const offset = 80; // Navbar height offset
+--                const targetPosition = targetElement.offsetTop - offset;
+--                
+--                window.scrollTo({
+--                    top: targetPosition,
+--                    behavior: 'smooth'
+--                });
+--            }
+-+
+-+    const observer = new IntersectionObserver(
+-+      (entries) => {
+-+        // Determine the entry closest to top that is intersecting
+-+        let topMost = null;
+-+        entries.forEach((entry) => {
+-+          if (!entry.isIntersecting) return;
+-+          if (
+-+            !topMost ||
+-+            entry.boundingClientRect.top < topMost.boundingClientRect.top
+-+          ) {
+-+            topMost = entry;
+-+          }
+-         });
+-+
+-+        if (topMost) {
+-+          const id = topMost.target.id;
+-+          navLinks.forEach((l) => {
+-+            l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
+-+          });
+-+        }
+-+      },
+-+      {
+-+        root: null,
+-+        rootMargin: '-50% 0px -50% 0px', // centre of viewport
+-+        threshold: 0,
+-+      },
+-+    );
+-+
+-+    sections.forEach((section) => observer.observe(section));
+-+  }
+-+
+-+  function initSmoothScroll() {
+-+    const navLinks = document.querySelectorAll('#navbar a');
+-+    navLinks.forEach((link) => {
+-+      link.addEventListener('click', (e) => {
+-+        e.preventDefault();
+-+        const targetId = link.getAttribute('href').substring(1);
+-+        const targetElement = document.getElementById(targetId);
+-+        if (!targetElement) return;
+-+
+-+        const offset = 80;
+-+        const top = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
+-+        window.scrollTo({ top, behavior: 'smooth' });
+-+      });
+-     });
+--    
+-+  }
+-+
+-+  // Cursor follower
+-+  function initCursorFollower() {
+-+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+-+
+-     const circle = document.createElement('div');
+-     circle.className = 'circle-follow';
+-     document.body.appendChild(circle);
+-@@ -81,71 +130,54 @@ document.addEventListener('DOMContentLoaded', () => {
+-     let targetY = 0;
+-     let currentX = window.innerWidth / 2;
+-     let currentY = window.innerHeight / 2;
+--    const easeFactor = 0.25;
+--    const initialEaseFactor = 0.05;
+--    let isInitialMove = true;
+-+    const EASE = 0.25;
+-+
+-+    let rafId;
+-+
+-+    function update() {
+-+      const dx = targetX - currentX;
+-+      const dy = targetY - currentY;
+-+      currentX += dx * EASE;
+-+      currentY += dy * EASE;
+-+      circle.style.left = `${currentX}px`;
+-+      circle.style.top = `${currentY}px`;
+-+      rafId = requestAnimationFrame(update);
+-+    }
+- 
+-     document.addEventListener('mousemove', (e) => {
+--        targetX = e.clientX;
+--        targetY = e.clientY;
+--        if (isInitialMove) {
+--            startLoadingAnimation();
+--            isInitialMove = false;
+--        }
+-+      targetX = e.clientX;
+-+      targetY = e.clientY;
+-     });
+- 
+--    function updateCirclePosition() {
+--        const dx = targetX - currentX;
+--        const dy = targetY - currentY;
+--
+--        const currentEaseFactor = isInitialMove ? initialEaseFactor : easeFactor;
+--
+--        currentX += dx * currentEaseFactor;
+--        currentY += dy * currentEaseFactor;
+--
+--        circle.style.left = `${currentX}px`;
+--        circle.style.top = `${currentY}px`;
+--
+--        requestAnimationFrame(updateCirclePosition);
+--    }
+--
+--    function startLoadingAnimation() {
+--        let start = null;
+--        const duration = 1000;
+--
+--        function loadingStep(timestamp) {
+--            if (!start) start = timestamp;
+--            const progress = (timestamp - start) / duration;
+--
+--            const angle = 2 * Math.PI * progress;
+--            circle.style.clipPath = `polygon(50% 50%, ${50 + 50 * Math.cos(angle)}% ${50 + 50 * Math.sin(angle)}%, 50% 50%)`;
+--
+--            if (progress < 1) {
+--                requestAnimationFrame(loadingStep);
+--            } else {
+--                circle.style.clipPath = 'none';
+--                updateCirclePosition();
+--            }
+--        }
+--
+--        requestAnimationFrame(loadingStep);
+--    }
+-+    // Pause animation when tab hidden
+-+    document.addEventListener('visibilitychange', () => {
+-+      if (document.hidden) {
+-+        cancelAnimationFrame(rafId);
+-+      } else {
+-+        rafId = requestAnimationFrame(update);
+-+      }
+-+    });
+- 
+--    circle.style.position = 'fixed';
+--    circle.style.left = '50%';
+--    circle.style.top = '50%';
+--    circle.style.transform = 'translate(-50%, -50%)';
+--    circle.style.pointerEvents = 'none';
+--    circle.style.transition = 'background-color 0.3s, transform 0.3s';
+--
+--    document.querySelectorAll('a, button, input').forEach(elem => {
+--        elem.addEventListener('mouseenter', () => {
+--            circle.style.transform = 'translate(-50%, -50%) scale(0.35)';
+--            circle.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+--        });
+--        elem.addEventListener('mouseleave', () => {
+--            circle.style.transform = 'translate(-50%, -50%) scale(1)';
+--            circle.style.backgroundColor = 'transparent';
+--        });
+-+    // Start
+-+    rafId = requestAnimationFrame(update);
+-+
+-+    // Shrink on interactive elements
+-+    document.querySelectorAll('a, button, input').forEach((elem) => {
+-+      elem.addEventListener('mouseenter', () => {
+-+        circle.style.transform = 'translate(-50%, -50%) scale(0.35)';
+-+        circle.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+-+      });
+-+      elem.addEventListener('mouseleave', () => {
+-+        circle.style.transform = 'translate(-50%, -50%) scale(1)';
+-+        circle.style.backgroundColor = 'transparent';
+-+      });
+-     });
+--});
+-\ No newline at end of file
+-+  }
+-+
+-+  document.addEventListener('DOMContentLoaded', () => {
+-+    runTitleAnimation();
+-+    initNavHighlight();
+-+    initSmoothScroll();
+-+    initCursorFollower();
+-+  });
+-+})();
+-diff --git a/styles.css b/styles.css
+-index 229f9bf..1559a7b 100644
+---- a/styles.css
+-+++ b/styles.css
+-@@ -23,6 +23,16 @@ body, html {
+-     line-height: 1.6;
+-     color: #333;
+-     font-family: sans-serif;
+-+    background: #fff;
+-+    isolation: isolate; /* ensure mix-blend-mode works consistently */
+-+}
+-+
+-+:root {
+-+  --primary-bg: #ffffff;
+-+  --accent-bg: #e0e0e0;
+-+  --text-color: #333333;
+-+  --navbar-link-width: 120px;
+-+  --transition-fast: 0.3s;
+- }
+- 
+- #render-container {
+-@@ -33,23 +43,40 @@ body, html {
+-   left: 0;
+- }
+- 
+-+.banana-overlay {
+-+  position: absolute;
+-+  inset: 0;
+-+  display: flex;
+-+  justify-content: center;
+-+  align-items: center;
+-+  color: white;
+-+  pointer-events: none;
+-+}
+-+
+- #navbar {
+--  position: -webkit-sticky;
+--  position: sticky;
+-+  position: fixed; /* overlay – no layout shift */
+-   top: 0;
+--  background-color: transparent;
+-+  right: 0;
+-+  left: 0;
+-+  background: transparent;
+-   padding: 20px;
+-   display: flex;
+--  justify-content: center;
+-+  justify-content: flex-end;
+-+  z-index: 2000; /* below cursor, above content */
+-+  pointer-events: none; /* allow nav itself to receive events via child */
+-+}
+-+
+-+#navbar nav {
+-+  display: flex;
+-   gap: 20px;
+--  z-index: 1000;
+-+  pointer-events: auto; /* re-enable pointer events for the links */
+- }
+- 
+- /* Navbar links */
+- #navbar a {
+-   display: block;
+-   position: relative;
+--  width: 120px;
+-+  width: var(--navbar-link-width);
+-   padding: 14px 20px;
+-   text-align: center;
+-   text-decoration: none;
+-@@ -58,7 +85,7 @@ body, html {
+-   border-radius: 8px;
+-   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+-   overflow: hidden;
+--  transition: all 0.3s ease;
+-+  transition: all var(--transition-fast) ease;
+- }
+- 
+- #navbar a::before {
+-@@ -68,6 +95,7 @@ body, html {
+-   left: 0;
+-   width: 100%;
+-   height: 100%;
+-+  color: white;
+-   background-color: #888;
+-   transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+-   z-index: -1;
+-@@ -84,6 +112,12 @@ body, html {
+- 
+- #navbar a.active {
+-   color: white;
+-+  background-color: transparent; /* allow ::before bg to show */
+-+}
+-+
+-+#navbar nav {
+-+  display: flex;
+-+  gap: 20px;
+- }
+- 
+- .about-me-container {
+-@@ -151,8 +185,19 @@ body, html {
+-     mix-blend-mode: difference;
+-     background-color: transparent;
+-     filter: invert(100%);
+--    z-index: 10000000;
+-+    z-index: 2147483647;
+-+  }
+-+
+-+@media (prefers-reduced-motion: reduce) {
+-+  .circle-follow {
+-+    display: none;
+-+  }
+-+  * {
+-+    animation-duration: 0.01ms !important;
+-+    animation-iteration-count: 1 !important;
+-+    transition-duration: 0.01ms !important;
+-   }
+-+}
+-   
+-   .circle-follow:hover {
+-     filter: grayscale(100%);
