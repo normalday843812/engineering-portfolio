@@ -37,7 +37,7 @@
     container.appendChild(renderer.domElement);
 
     // Lighting ------------------------------------------------------------
-    const bottomLight = new THREE.PointLight(0xffa500, 2, 100);
+    const bottomLight = new THREE.PointLight(0xffb742, 1.5, 100);
     bottomLight.position.set(0, 0, 0);
     scene.add(bottomLight);
 
@@ -53,7 +53,7 @@
       const objLoader = new THREE.OBJLoader();
       objLoader.setMaterials(materials);
       objLoader.load('./banana/Banana.obj', (object) => {
-        object.scale.set(100, 100, 100);
+        object.scale.set(40, 40, 40);
         banana = object;
         scene.add(banana);
       });
@@ -71,33 +71,19 @@
     };
     animate();
 
-    // Scroll progress controls banana trajectory -------------------------
-    let startScroll = null;
-
-    const handleScroll = () => {
-      if (startScroll === null) startScroll = window.scrollY;
-
-      const maxScroll =
-        document.body.scrollHeight - window.innerHeight - startScroll;
-      const effectiveScroll = Math.max(0, window.scrollY - startScroll);
-      const progress = Math.min(1, effectiveScroll / maxScroll);
-      updateBananaPosition(progress);
-    };
-
-    function updateBananaPosition(progress) {
+    // Position the banana subtly in background (no scroll trajectory)
+    function positionBanana() {
       if (!banana) return;
-      const startPos = new THREE.Vector3(-10, 10, -10);
-      const midPos = new THREE.Vector3(-2, 2, -5);
-      const endPos = new THREE.Vector3(0, -2, 1);
-
-      if (progress < 0.5) {
-        banana.position.lerpVectors(startPos, midPos, progress / 0.5);
-      } else {
-        banana.position.lerpVectors(midPos, endPos, (progress - 0.5) / 0.5);
-      }
+      banana.position.set(3, -2, -6);
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Run once banana mesh is ready
+    const checkReady = setInterval(() => {
+      if (banana) {
+        positionBanana();
+        clearInterval(checkReady);
+      }
+    }, 50);
 
     // Resize handler ------------------------------------------------------
     function onResize() {
