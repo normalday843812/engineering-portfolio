@@ -69,7 +69,26 @@
 
     function positionBanana() {
       if (!banana) return;
-      banana.position.set(4, -2.5, -7);
+      
+      const aspectRatio = container.clientWidth / container.clientHeight;
+      
+      const mobilePosition = { x: 0, y: -4, z: -7 };
+      const desktopPosition = { x: 4.5, y: -2.5, z: -7 };
+      
+      const minAspectRatio = 0.6;
+      const maxAspectRatio = 1.8;
+      
+      // Clamp aspect ratio to our range
+      const clampedRatio = Math.max(minAspectRatio, Math.min(maxAspectRatio, aspectRatio));
+      
+      const t = (clampedRatio - minAspectRatio) / (maxAspectRatio - minAspectRatio);
+
+      const easedT = t * t * (3 - 2 * t);
+      const x = mobilePosition.x + (desktopPosition.x - mobilePosition.x) * easedT;
+      const y = mobilePosition.y + (desktopPosition.y - mobilePosition.y) * easedT;
+      const z = mobilePosition.z + (desktopPosition.z - mobilePosition.z) * easedT;
+      
+      banana.position.set(x, y, z);
     }
 
     const checkReady = setInterval(() => {
@@ -83,6 +102,7 @@
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
+      positionBanana();
     }
     window.addEventListener('resize', onResize);
 
