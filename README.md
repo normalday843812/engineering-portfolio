@@ -11,4 +11,4 @@ It is intentionally lightweight: just static HTML, CSS and vanilla JavaScript, s
 
 ## Credits
 
-Almost all code and the banana model are my own work.  Icons are provided by [Bootstrap Icons](https://icons.getbootstrap.com/) under the MIT License.  Webfonts served via Google Fonts.
+Almost all code and the banana model are my own work.  Icons are provided by [Bootstrap Icons](https://icons.getbootstrap.com/) under the MIT License.  Webfonts served via Google Fonts. Favicon credits are attached in the about.txt
