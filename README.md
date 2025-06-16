@@ -1,17 +1,14 @@
-# engineering-portfolio
-this is my (unfinished) portfolio project
-you should use this because it's a cool thing
-I stole the banana idea from https://www.danielspatzek.com/home/, and also the fonts
-I also stole the cursor thing from myself and I have no idea where I found that banana model, actually I think it's from: https://www.turbosquid.com/3d-models/fruit-food-banana-3d-1610134
+# Kai Stewart – Engineering Portfolio
 
-things to  implement:
-- ~~banana flys across the screen~~
-- Infinite scrolling
-- particles
-- Cool mouse effect
-- Add embeddings of previous projects with an arrow maybe?
-- Try cool effects? idk
-- Thing that says if you right click for context menu
+This repository contains the source code for my personal engineering-portfolio website.  
+It is intentionally lightweight: just static HTML, CSS and vanilla JavaScript, so it can be deployed to any basic file host (e.g. GitHub Pages, like I'm using)
 
+## Highlights
 
-# THIS IS OUTDATED
+• **3-D Banana** – model, materials and small Three.js scene authored by me.  It lazily loads to keep the initial page weight low.
+• **Scroll-triggered reveal animations** and a custom cursor follower I designed some years back.
+• **Project pages** generated from Markdown + CSV image manifests so new projects can be added without touching HTML.
+
+## Credits
+
+Almost all code and the banana model are my own work.  Icons are provided by [Bootstrap Icons](https://icons.getbootstrap.com/) under the MIT License.  Webfonts served via Google Fonts.
