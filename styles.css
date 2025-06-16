@@ -1,13 +1,13 @@
 @font-face {
-    font-family: 'sang-bleu';
-    src: url('./fonts/SangBleuOGSerif-Regular-WebS.woff2') format('woff2');
-    font-display: swap;
+  font-family: 'sang-bleu';
+  src: url('./fonts/SangBleuOGSerif-Regular-WebS.woff2') format('woff2');
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'suisse-book';
-    src: url('./fonts/SuisseIntl-Book-WebM.woff2') format('woff2');
-    font-display: swap;
+  font-family: 'suisse-book';
+  src: url('./fonts/SuisseIntl-Book-WebM.woff2') format('woff2');
+  font-display: swap;
 }
 
 :root {
@@ -41,6 +41,22 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+}
+
+/* Provide offset when scrolling to in-page anchors so content isn’t hidden under navbar */
+section[id] {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
 }
 
 /* --------------------------------------------------
@@ -65,7 +81,8 @@ body {
   z-index: 2000;
   background: transparent;
   transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
-  pointer-events: none; /* enable events on children only */
+  pointer-events: none;
+  /* enable events on children only */
 }
 
 .navbar.scrolled {
@@ -82,6 +99,12 @@ body {
   align-items: center;
   justify-content: space-between;
   padding-inline: 1rem;
+  /* Allow clicks only on the actual nav content, not the full 100% width */
+  pointer-events: none;
+}
+
+/* Re-enable pointer events for direct children (links, brand, toggle) */
+.navbar .nav-inner>* {
   pointer-events: auto;
 }
 
@@ -134,6 +157,49 @@ body {
   font-size: 1.5rem;
 }
 
+/* --------------------------------------------------
+   Initial loader
+-------------------------------------------------- */
+
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--clr-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#loader.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#loader .loader-logo {
+  font-family: 'sang-bleu', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  color: var(--clr-ink);
+  animation: fadeInLogo 1.2s ease forwards;
+}
+
+#loader .accent {
+  color: var(--clr-accent);
+}
+
+@keyframes fadeInLogo {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @media (max-width: 768px) {
   .nav-links {
     position: fixed;
@@ -179,12 +245,10 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255 255 255 / 0.9) 0%,
-    rgba(255 255 255 / 0.7) 40%,
-    rgba(255 255 255 / 0) 100%
-  );
+  background: linear-gradient(to bottom,
+      rgba(255 255 255 / 0.9) 0%,
+      rgba(255 255 255 / 0.7) 40%,
+      rgba(255 255 255 / 0) 100%);
   pointer-events: none;
 }
 
@@ -233,9 +297,22 @@ body {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(6px); }
-  60% { transform: translateY(4px); }
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(6px);
+  }
+
+  60% {
+    transform: translateY(4px);
+  }
 }
 
 /* --------------------------------------------------
@@ -266,6 +343,7 @@ body {
 .about-me.section {
   min-height: 75vh;
 }
+
 .reveal {
   opacity: 0;
   transform: translateY(40px);
@@ -483,6 +561,12 @@ footer {
   cursor: pointer;
 }
 
+/* Ensure the icon inside the close button also shows hand cursor */
+.modal-close i {
+  pointer-events: none;
+  /* Icon shouldn't block click but cursor should change */
+}
+
 .modal-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -566,9 +650,25 @@ footer {
   .modal-content {
     grid-template-columns: 1fr;
   }
+
   .modal-body {
     padding-block: 1rem;
   }
+}
+
+/* Prevent from accidentally selecting assets or the site structure */
+* {
+  user-select: none;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  user-select: text;
 }
 
 /* --------------------------------------------------
@@ -606,87 +706,87 @@ footer {
   font-family: 'suisse-book', sans-serif;
 }
 
-
-/* legacy #title styles removed (new ones defined above) */
-
-/* legacy hero styles overwritten above */
-
-/* legacy content/section styles removed */
-
-
-  .circle-follow {
-    width: 45px;
-    height: 45px;
-    border: 2px solid var(--clr-accent);
-    border-radius: 50%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    transition: background-color 0.3s, transform 0.3s, width 0.3s, height 0.3s;
-    mix-blend-mode: difference;
-    background-color: transparent;
-    z-index: 2147483647;
-  }
+.circle-follow {
+  width: 45px;
+  height: 45px;
+  border: 2px solid black;
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: background-color 0.3s, transform 0.3s, width 0.3s, height 0.3s;
+  mix-blend-mode: difference;
+  background-color: transparent;
+  z-index: 2147483647;
+  filter: invert(100%);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .circle-follow {
     display: none;
   }
+
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
-  
-  .circle-follow:hover {
-    filter: grayscale(100%);
+
+.circle-follow:hover {
+  filter: grayscale(100%);
+}
+
+@-webkit-keyframes glideInFromTop {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-100vh);
+    transform: translateY(-100vh);
   }
-  
-  @-webkit-keyframes glideInFromTop {
-    0% {
-      opacity: 0;
-      -webkit-transform: translateY(-100vh);
-      transform: translateY(-100vh);
-    }
-    100% {
-      opacity: 1;
-      -webkit-transform: translateY(0);
-      transform: translateY(0);
-    }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
   }
-  
-  @keyframes glideInFromTop {
-    0% {
-      opacity: 0;
-      transform: translateY(-100vh);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
+}
+
+@keyframes glideInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-100vh);
   }
-  
-  @-webkit-keyframes fadeInEffect {
-    0% {
-      opacity: 0;
-    }
-    25% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  @keyframes fadeInEffect {
-    0% {
-      opacity: 0;
-    }
-    25% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+}
+
+@-webkit-keyframes fadeInEffect {
+  0% {
+    opacity: 0;
   }
+
+  25% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInEffect {
+  0% {
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

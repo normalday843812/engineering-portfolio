@@ -12,3 +12,6 @@ things to  implement:
 - Add embeddings of previous projects with an arrow maybe?
 - Try cool effects? idk
 - Thing that says if you right click for context menu
+
+
+# THIS IS OUTDATED

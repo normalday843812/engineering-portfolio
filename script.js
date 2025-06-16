@@ -130,62 +130,7 @@
     });
   }
 
-  // Cursor follower
-  function initCursorFollower() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const circle = document.createElement('div');
-    circle.className = 'circle-follow';
-    document.body.appendChild(circle);
-
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = window.innerWidth / 2;
-    let currentY = window.innerHeight / 2;
-    const EASE = 0.25;
-
-    let rafId;
-
-    function update() {
-      const dx = targetX - currentX;
-      const dy = targetY - currentY;
-      currentX += dx * EASE;
-      currentY += dy * EASE;
-      circle.style.left = `${currentX}px`;
-      circle.style.top = `${currentY}px`;
-      rafId = requestAnimationFrame(update);
-    }
-
-    document.addEventListener('mousemove', (e) => {
-      targetX = e.clientX;
-      targetY = e.clientY;
-    });
-
-    // Pause animation when tab hidden
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        cancelAnimationFrame(rafId);
-      } else {
-        rafId = requestAnimationFrame(update);
-      }
-    });
-
-    // Start
-    rafId = requestAnimationFrame(update);
-
-    // Shrink on interactive elements
-    document.querySelectorAll('a, button, input, .project-card, [data-hover]').forEach((elem) => {
-      elem.addEventListener('mouseenter', () => {
-        circle.style.transform = 'translate(-50%, -50%) scale(0.35)';
-        circle.style.backgroundColor =
-          getComputedStyle(document.documentElement).getPropertyValue('--clr-accent');
-      });
-      elem.addEventListener('mouseleave', () => {
-        circle.style.transform = 'translate(-50%, -50%) scale(1)';
-        circle.style.backgroundColor = 'transparent';
-      });
-    });
-  }
 
   // Project modal ---------------------------------------------------------
   function initProjectModal() {
@@ -227,8 +172,16 @@
       modalTitle.textContent = title;
       modalDesc.textContent = card.dataset.description;
 
-      if (card.dataset.github) {
+      // Prefer explicit project page if provided, else fallback to GitHub
+      if (card.dataset.project) {
+        modalLink.href = `projects.html?project=${encodeURIComponent(
+          card.dataset.project,
+        )}`;
+        modalLink.innerHTML = '<i class="bi bi-box-arrow-up-right"></i> View Project';
+        modalLink.style.display = 'inline-flex';
+      } else if (card.dataset.github) {
         modalLink.href = card.dataset.github;
+        modalLink.innerHTML = '<i class="bi bi-github"></i> GitHub';
         modalLink.style.display = 'inline-flex';
       } else {
         modalLink.style.display = 'none';
@@ -280,13 +233,55 @@
     });
   }
 
-  // Scroll reveal animation
+  (function ensureDialogSupport() {
+    if (typeof HTMLDialogElement !== 'undefined' && 'showModal' in HTMLDialogElement.prototype) {
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+      dialog { display: none; position: fixed; inset: 50% auto auto 50%; transform: translate(-50%, -50%); }
+      dialog[open] { display: block; }
+      body.dialog-open { overflow: hidden; }
+      dialog::backdrop, .dialog-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0 0 0 / 0.45);
+      }
+    `;
+    document.head.appendChild(style);
+
+    const dialogProto = HTMLElement.prototype;
+
+    if (!dialogProto.showModal) {
+      dialogProto.showModal = function showModal() {
+        this.setAttribute('open', '');
+        this.style.display = 'block';
+        document.body.classList.add('dialog-open');
+      };
+    }
+
+    if (!dialogProto.close) {
+      dialogProto.close = function close() {
+        this.removeAttribute('open');
+        this.style.display = 'none';
+        document.body.classList.remove('dialog-open');
+      };
+    }
+  })();
+
   function initScrollReveal() {
     const elements = document.querySelectorAll('.reveal');
     if (!elements.length) return;
 
+    const revealImmediately = () => {
+      document
+        .querySelectorAll('.reveal:not(.revealed)')
+        .forEach((el) => el.classList.add('revealed'));
+    };
+
     if (!('IntersectionObserver' in window)) {
-      elements.forEach((el) => el.classList.add('revealed'));
+      revealImmediately();
       return;
     }
 
@@ -303,13 +298,44 @@
     );
 
     elements.forEach((el) => observer.observe(el));
+
+    setTimeout(revealImmediately, 1200);
   }
 
+  window.initScrollReveal = initScrollReveal;
+
   document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      const hideLoader = () => {
+        if (!loader) return;
+        loader.classList.add('hidden');
+        loader.addEventListener('transitionend', () => loader.remove(), {
+          once: true,
+        });
+        sessionStorage.setItem('siteLoaded', 'true');
+      };
+
+      if (sessionStorage.getItem('siteLoaded')) {
+        hideLoader();
+      } else {
+        const timeoutId = setTimeout(hideLoader, 3000); // safety net
+
+        document.addEventListener(
+          'bananaLoaded',
+          () => {
+            clearTimeout(timeoutId);
+            requestAnimationFrame(() => hideLoader());
+          },
+          { once: true },
+        );
+      }
+    }
+
     runTitleAnimation();
     initNavHighlight();
     initSmoothScroll();
-    initCursorFollower();
+
     initScrollReveal();
     initProjectModal();
 
@@ -354,21 +380,35 @@
 
     // Navbar background on scroll
     const navbar = document.getElementById('navbar');
-    const heroSection = document.getElementById('home');
-    if (navbar && heroSection) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-              navbar.classList.add('scrolled');
-            } else {
-              navbar.classList.remove('scrolled');
-            }
-          });
-        },
-        { rootMargin: `-${navbar.offsetHeight}px 0px 0px 0px`, threshold: 0 },
-      );
-      observer.observe(heroSection);
+    if (navbar) {
+      const heroSection = document.getElementById('home');
+
+      if (heroSection) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) {
+                navbar.classList.add('scrolled');
+              } else {
+                navbar.classList.remove('scrolled');
+              }
+            });
+          },
+          { rootMargin: `-${navbar.offsetHeight}px 0px 0px 0px`, threshold: 0 },
+        );
+        observer.observe(heroSection);
+      } else {
+        // For other pages, small scroll toggles visibility
+        const toggleOnScroll = () => {
+          if (window.scrollY > 75) {
+            navbar.classList.add('scrolled');
+          } else {
+            navbar.classList.remove('scrolled');
+          }
+        };
+        toggleOnScroll();
+        window.addEventListener('scroll', toggleOnScroll, { passive: true });
+      }
     }
   });
 })();

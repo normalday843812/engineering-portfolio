@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ping-pong-paddle",
+    "title": "Ping Pong Paddle (placeholder)",
+    "cover": "https://placehold.co/600x400?text=Ping+Pong+Paddle"
+  },
+  {
+    "id": "safety-badge",
+    "title": "Safety Badge (placeholder)",
+    "cover": "https://placehold.co/600x400?text=Safety+Badge"
+  },
+  {
+    "id": "phone-case",
+    "title": "Phone Case",
+    "cover": "projects/phone-case/images/v2_phone_case.png"
+  }
+]
