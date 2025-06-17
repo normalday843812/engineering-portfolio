@@ -5,9 +5,12 @@ It is intentionally lightweight: just static HTML, CSS and vanilla JavaScript, s
 
 ## Highlights
 
-• **3-D Banana** – model, materials and small Three.js scene authored by me.  It lazily loads to keep the initial page weight low.
-• **Scroll-triggered reveal animations** and a custom cursor follower I designed some years back.
-• **Project pages** generated from Markdown + CSV image manifests so new projects can be added without touching HTML.
+- **3-D Banana** – model, materials and small Three.js scene authored by me.  It lazily loads to keep the initial page weight low.
+
+- **Scroll-triggered reveal animations** and a custom cursor follower I designed some years back.
+
+-  **Project pages** generated from Markdown + CSV image manifests so new projects can be added without touching HTML.
+
 
 ## Credits
 
