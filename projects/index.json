@@ -12,11 +12,11 @@
   {
     "id": "phone-case",
     "title": "Phone Case",
-    "cover": "projects/phone-case/images/v2_phone_case.png"
+    "cover": "projects/phone-case/images/v2_phone_case.webp"
   },
   {
     "id": "cad-practise",
     "title": "CAD Practise",
-    "cover": "projects/cad-practise/images/coffee-cup-main.png"
+    "cover": "projects/cad-practise/images/coffee-cup-main.webp"
   }
 ]
