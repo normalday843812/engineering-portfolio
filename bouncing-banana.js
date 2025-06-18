@@ -160,7 +160,7 @@ function initBouncingBanana() {
     vy -= Math.random() * 10 + 5;
     
     setTimeout(() => {
-      window.location.href = '/game.html';
+      window.location.href = 'https://normalday843812.github.io/engineering-portfolio/game.html';
     }, 150);
   });
   
