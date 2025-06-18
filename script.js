@@ -336,6 +336,10 @@
     initNavHighlight();
     initSmoothScroll();
 
+    if (typeof initBouncingBanana === 'function') {
+      window.bouncingBanana = initBouncingBanana();
+    }
+
     initScrollReveal();
     initProjectModal();
 

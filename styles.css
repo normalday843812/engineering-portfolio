@@ -451,6 +451,16 @@ h4 {
   opacity: 0.8;
 }
 
+/* Banana */
+
+.bouncing-banana {
+  transition: filter 0.2s ease, transform 0.2s ease !important;
+}
+
+.bouncing-banana:hover {
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 183, 66, 0.5)) !important;
+}
+
 /* Projects grid */
 
 .projects-grid {
