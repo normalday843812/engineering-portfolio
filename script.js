@@ -132,7 +132,9 @@
 
 
 
-  // Project modal ---------------------------------------------------------
+  /* ---------------------------------------------------------------
+       Project Modal
+    --------------------------------------------------------------- */
   function initProjectModal() {
     const modal = document.getElementById('project-modal');
     if (!modal) return;

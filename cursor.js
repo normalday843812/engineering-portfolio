@@ -53,9 +53,9 @@
 
     rafId = requestAnimationFrame(update);
 
-    // -----------------------------------------------------------------
-    // Hover feedback (delegated so dynamically-inserted elements work) 
-    // -----------------------------------------------------------------
+    /* ---------------------------------------------------------------
+       Hover feedback
+    --------------------------------------------------------------- */
     const interactiveSelectors = [
       'a',
       'button',

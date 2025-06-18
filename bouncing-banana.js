@@ -7,9 +7,6 @@ function initBouncingBanana() {
   if (!footer) return;
 
   const banana = document.createElement('img');
-  // Use the local favicon as the bouncing image instead of requesting it from GitHub. This
-  // eliminates an unnecessary network round-trip and avoids broken images if the remote
-  // URL ever changes or is unavailable.
   banana.src = './assets/android-chrome-192x192.png';
   banana.alt = 'Bouncing banana - Click to play game!';
   banana.className = 'bouncing-banana';
@@ -54,9 +51,6 @@ function initBouncingBanana() {
   const rotationSpeed = 8;
   const minVelocity = 0.5;
   
-  // Get footer bounds relative to the entire page so the banana (now
-  // `position: absolute`) moves together with the document when the user
-  // scrolls.
   function getFooterBounds() {
     const rect = footer.getBoundingClientRect();
     return {
@@ -108,10 +102,6 @@ function initBouncingBanana() {
       if (Math.abs(vy) < minVelocity) vy = -minVelocity * 2;
     }
     
-    // Apply mild repulsion from the mouse pointer so the cursor can "push"
-    // the banana around while still letting clicks land.  We only push when
-    // the pointer is close but *not* inside the banana's bounds – this keeps
-    // the element under the cursor long enough for the click event to fire.
     const pushRadius = 80;
     if (mouseX !== null) {
       const centerX = x + 24;
@@ -121,7 +111,6 @@ function initBouncingBanana() {
       const dist = Math.hypot(dx, dy);
 
       if (dist > 0 && dist < pushRadius) {
-        // Skip if pointer is directly over the banana (so clicks still work)
         const pointerInside =
           mouseX >= x &&
           mouseX <= x + 48 &&
