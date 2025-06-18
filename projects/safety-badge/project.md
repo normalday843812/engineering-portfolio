@@ -1,5 +1,3 @@
-# this is currently unfinished
-
 # Safety Badge
 
 ## List of Resources
