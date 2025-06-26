@@ -18,5 +18,10 @@
     "id": "cad-practise",
     "title": "CAD Practise",
     "cover": "projects/cad-practise/images/coffee-cup-main.webp"
+  },
+  {
+    "id": "music-box",
+    "title": "Music Box",
+    "cover": "projects/cad-practise/images/coffee-cup-main.webp"
   }
 ]
