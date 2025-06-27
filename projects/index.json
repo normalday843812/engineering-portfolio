@@ -6,7 +6,7 @@
   },
   {
     "id": "safety-badge",
-    "title": "Safety Badge (placeholder)",
+    "title": "Safety Badge",
     "cover": "projects/safety-badge/images/final-image.webp"
   },
   {
@@ -23,5 +23,10 @@
     "id": "music-box",
     "title": "Music Box",
     "cover": "projects/music-box/images/cad-isometric.webp"
+  },
+  {
+    "id": "robotics",
+    "title": "Robot",
+    "cover": "projects/robotics/images/top-claw.webp"
   }
 ]
