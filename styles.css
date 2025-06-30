@@ -166,9 +166,15 @@ section[id] {
   box-shadow: 0 4px 8px rgba(0 0 0 / 0.05);
   border-radius: var(--radius);
   padding: 0.5rem 0;
-  display: none;
   min-width: 180px;
   z-index: 3000;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity var(--transition-fast) ease, transform var(--transition-fast) ease,
+    visibility var(--transition-fast) ease;
 }
 
 .dropdown-menu a {
@@ -187,13 +193,19 @@ section[id] {
 
 .nav-item.dropdown:hover .dropdown-menu,
 .nav-item.dropdown:focus-within .dropdown-menu {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 @media (max-width: 768px) {
   .nav-links.open .dropdown-menu {
     position: static;
-    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    pointer-events: auto !important;
     box-shadow: none;
     padding-left: 0;
   }
