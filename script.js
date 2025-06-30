@@ -130,6 +130,55 @@
     });
   }
 
+  /* ---------------------------------------------------------------
+     Projects dropdown in navbar
+  --------------------------------------------------------------- */
+  function initProjectsDropdown() {
+    const dropdown = document.getElementById('project-categories');
+    if (!dropdown) return;
+
+    fetch('./projects/index.json')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((list) => {
+        if (!Array.isArray(list) || !list.length) return;
+
+        const categories = [...new Set(list.map((p) => p.category || 'uncategorised'))];
+
+        const formatCat = (slug) => {
+          const roman = new Set([
+            'i',
+            'ii',
+            'iii',
+            'iv',
+            'v',
+            'vi',
+            'vii',
+            'viii',
+            'ix',
+            'x',
+          ]);
+
+          return slug
+            .split('-')
+            .map((part) => {
+              if (roman.has(part)) return part.toUpperCase();
+              return part.charAt(0).toUpperCase() + part.slice(1);
+            })
+            .join(' ');
+        };
+
+        categories.forEach((cat) => {
+          const a = document.createElement('a');
+          a.href = `projects.html?category=${encodeURIComponent(cat)}`;
+          a.textContent = formatCat(cat);
+          dropdown.appendChild(a);
+        });
+      })
+      .catch(() => {
+        /* ignore errors */
+      });
+  }
+
 
 
   /* ---------------------------------------------------------------
@@ -338,6 +387,8 @@
     initNavHighlight();
     initSmoothScroll();
 
+    initProjectsDropdown();
+
     if (typeof initBouncingBanana === 'function') {
       window.bouncingBanana = initBouncingBanana();
     }
@@ -372,16 +423,20 @@
         navToggle.innerHTML = isOpen ? '<i class="bi bi-x"></i>' : '<i class="bi bi-list"></i>';
       });
 
-      // Close menu when clicking a nav link (on small screens)
-      navLinks.querySelectorAll('a[href^="#"]').forEach((link) => {
-        link.addEventListener('click', () => {
+      // Close menu when clicking any link inside nav (use capture to detect early)
+      navLinks.addEventListener(
+        'click',
+        (e) => {
+          const target = e.target.closest('a');
+          if (!target) return;
           if (navLinks.classList.contains('open')) {
             navLinks.classList.remove('open');
             navToggle.setAttribute('aria-label', 'Open Menu');
             navToggle.innerHTML = '<i class="bi bi-list"></i>';
           }
-        });
-      });
+        },
+        true,
+      );
     }
 
     // Navbar background on scroll

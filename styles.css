@@ -148,6 +148,61 @@ section[id] {
   color: var(--clr-base);
 }
 
+/* ------------------------------
+   Dropdown for Projects link
+------------------------------ */
+
+.nav-item.dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--clr-base);
+  box-shadow: 0 4px 8px rgba(0 0 0 / 0.05);
+  border-radius: var(--radius);
+  padding: 0.5rem 0;
+  display: none;
+  min-width: 180px;
+  z-index: 3000;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
+  color: var(--clr-ink);
+  border-radius: 0;
+  transition: background var(--transition-fast) ease;
+}
+
+.dropdown-menu a:hover {
+  background: var(--clr-grey-100);
+  color: var(--clr-ink);
+}
+
+.nav-item.dropdown:hover .dropdown-menu,
+.nav-item.dropdown:focus-within .dropdown-menu {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .nav-links.open .dropdown-menu {
+    position: static;
+    display: block !important;
+    box-shadow: none;
+    padding-left: 0;
+  }
+
+  .nav-links.open .dropdown-menu a {
+    padding-left: 1.5rem;
+  }
+}
+
 /* Mobile toggle */
 .nav-toggle {
   display: none;

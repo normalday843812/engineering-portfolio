@@ -31,14 +31,15 @@
 
   const params = new URLSearchParams(window.location.search);
   const projectId = params.get('project');
+  const categoryFilter = params.get('category');
 
   if (projectId) {
     renderProjectDetail(projectId);
   } else {
-    renderProjectsIndex();
+    renderProjectsIndex(categoryFilter);
   }
 
-  async function renderProjectsIndex() {
+  async function renderProjectsIndex(filterCategory = null) {
     let projectsList = [];
     try {
       const res = await fetch('./projects/index.json');
@@ -69,37 +70,82 @@
       ];
     }
 
-    const grid = document.createElement('div');
-    grid.className = 'projects-index';
-
-    projectsList.forEach((proj) => {
-      const card = document.createElement('article');
-      card.className = 'proj-card reveal';
-      card.tabIndex = 0;
-      card.dataset.id = proj.id;
-
-      card.innerHTML = `
-        <img src="${proj.cover}" alt="${proj.title} cover image" loading="lazy" />
-        <div class="info">
-          <h3>${proj.title}</h3>
-          <p><span class="view-link">View full project <i class="bi bi-arrow-right"></i></span></p>
-        </div>`;
-
-      const navigate = () => {
-        window.location.href = `projects.html?project=${encodeURIComponent(
-          proj.id,
-        )}`;
-      };
-
-      card.addEventListener('click', navigate);
-      card.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') navigate();
-      });
-
-      grid.appendChild(card);
+    // Group by category
+    const byCat = {};
+    projectsList.forEach((p) => {
+      const cat = p.category || 'uncategorised';
+      (byCat[cat] ||= []).push(p);
     });
 
-    main.appendChild(grid);
+    const formatCat = (slug) => {
+      const roman = new Set([
+        'i',
+        'ii',
+        'iii',
+        'iv',
+        'v',
+        'vi',
+        'vii',
+        'viii',
+        'ix',
+        'x',
+      ]);
+      return slug
+        .split('-')
+        .map((part) => {
+          if (roman.has(part)) return part.toUpperCase();
+          return part.charAt(0).toUpperCase() + part.slice(1);
+        })
+        .join(' ');
+    };
+
+    const categoriesToShow = filterCategory ? [filterCategory] : Object.keys(byCat);
+
+    categoriesToShow.forEach((cat) => {
+      const projects = byCat[cat] || [];
+      if (!projects.length) return;
+
+      // Wrapper for heading + grid so both share same horizontal padding
+      const section = document.createElement('div');
+      section.className = 'category-section';
+
+      const h2 = document.createElement('h2');
+      h2.textContent = formatCat(cat);
+      section.appendChild(h2);
+
+      const grid = document.createElement('div');
+      grid.className = 'projects-index';
+
+      projects.forEach((proj) => {
+        const card = document.createElement('article');
+        card.className = 'proj-card reveal';
+        card.tabIndex = 0;
+        card.dataset.id = proj.id;
+
+        card.innerHTML = `
+          <img src="${proj.cover}" alt="${proj.title} cover image" loading="lazy" />
+          <div class="info">
+            <h3>${proj.title}</h3>
+            <p><span class="view-link">View full project <i class="bi bi-arrow-right"></i></span></p>
+          </div>`;
+
+        const navigate = () => {
+          window.location.href = `projects.html?project=${encodeURIComponent(
+            proj.id,
+          )}`;
+        };
+
+        card.addEventListener('click', navigate);
+        card.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') navigate();
+        });
+
+        grid.appendChild(card);
+      });
+
+      section.appendChild(grid);
+      main.appendChild(section);
+    });
 
     // After DOM added, run reveal effects if script.js is loaded
     if (typeof initScrollReveal === 'function') {
