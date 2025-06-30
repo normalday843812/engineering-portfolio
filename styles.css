@@ -208,10 +208,32 @@ section[id] {
     pointer-events: auto !important;
     box-shadow: none;
     padding-left: 0;
+    margin-top: 0.25rem;
+  }
+
+  /* Stack the Projects link and its subitems vertically */
+  .nav-links.open .nav-item.dropdown {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .nav-links.open .nav-item.dropdown > .projects-link {
+    display: block;
+    width: 100%;
+    padding-bottom: 0.25rem;
+    text-align: left;
   }
 
   .nav-links.open .dropdown-menu a {
     padding-left: 1.5rem;
+  }
+
+  /* Make top-level links full width & left aligned */
+  .nav-links.open > a {
+    display: block;
+    width: 100%;
+    text-align: left;
   }
 }
 
@@ -285,6 +307,7 @@ section[id] {
 
   .nav-links.open {
     transform: translateX(0);
+    align-items: flex-start;
   }
 
   .nav-toggle {
