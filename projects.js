@@ -39,6 +39,16 @@
     renderProjectsIndex(categoryFilter);
   }
 
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  function formatDateRange(str) {
+    return str || '';
+  }
+
   async function renderProjectsIndex(filterCategory = null) {
     let projectsList = [];
     try {
@@ -48,26 +58,6 @@
       }
     } catch (_) {
       // ignore
-    }
-
-    if (!projectsList.length) {
-      projectsList = [
-        {
-          id: 'ping-pong-paddle',
-          title: 'Ping Pong Paddle',
-          cover: 'projects/ping-pong-paddle/images/cover.jpg',
-        },
-        {
-          id: 'safety-badge',
-          title: 'Safety Badge',
-          cover: 'projects/safety-badge/images/cover.jpg',
-        },
-        {
-          id: 'phone-case',
-          title: 'Phone Case',
-          cover: 'projects/phone-case/images/cover.jpg',
-        },
-      ];
     }
 
     // Group by category
@@ -117,6 +107,7 @@
       grid.className = 'projects-index';
 
       projects.forEach((proj) => {
+        const dateText = formatDateRange(proj.date || '');
         const card = document.createElement('article');
         card.className = 'proj-card reveal';
         card.tabIndex = 0;
@@ -126,6 +117,7 @@
           <img src="${proj.cover}" alt="${proj.title} cover image" loading="lazy" />
           <div class="info">
             <h3>${proj.title}</h3>
+            ${dateText ? `<p class="proj-date">${dateText}</p>` : ''}
             <p><span class="view-link">View full project <i class="bi bi-arrow-right"></i></span></p>
           </div>`;
 
@@ -187,6 +179,23 @@
     if (firstH1) firstH1.remove();
 
     container.innerHTML += `<h1>${titleText}</h1>`;
+
+    try {
+      const listRes = await fetch('./projects/index.json');
+      if (listRes.ok) {
+        const projList = await listRes.json();
+        const match = projList.find((p) => p.id === id);
+        if (match && match.date) {
+          const dateText = formatDateRange(match.date);
+          if (dateText) {
+            container.innerHTML += `<p class="project-date">${dateText}</p>`;
+          }
+        }
+      }
+    } catch (_) {
+      // ignore
+    }
+
     container.innerHTML += tmp.innerHTML;
 
     // Gallery

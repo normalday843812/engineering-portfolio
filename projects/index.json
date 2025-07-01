@@ -3,42 +3,49 @@
     "id": "ping-pong-paddle",
     "title": "Ping Pong Paddle",
     "cover": "projects/ping-pong-paddle/images/paddle-top.webp",
-    "category":"engineering-i"
+    "category":"engineering-i",
+    "date":"2025/06/10 - 2025/06/13"
   },
   {
     "id": "safety-badge",
     "title": "Safety Badge",
     "cover": "projects/safety-badge/images/final-image.webp",
-    "category":"engineering-i"
+    "category":"engineering-i",
+    "date":"2025/06/13 - 2025/06/16"
   },
   {
     "id": "phone-case",
     "title": "Phone Case",
     "cover": "projects/phone-case/images/v2_phone_case.webp",
-    "category":"engineering-i"
+    "category":"engineering-i",
+    "date":"2025/06/10 - 2025/06/13"
   },
   {
     "id": "cad-practise",
     "title": "CAD Practise",
     "cover": "projects/cad-practise/images/coffee-cup-main.webp",
-    "category":"engineering-i"
+    "category":"engineering-i",
+    "date":""
   },
   {
     "id": "music-box",
     "title": "Music Box",
     "cover": "projects/music-box/images/cad-isometric.webp",
-    "category":"engineering-i"
+    "category":"engineering-i",
+    "date":"2025/06/13 - 2025/06/20"
   },
   {
     "id": "robotics",
     "title": "Robot",
     "cover": "projects/robotics/images/top-claw.webp",
-    "category":"engineering-i"
+    "category":"engineering-i",
+    "date":"2025/06/20 - 2025/06/27"
   },
   {
     "id": "skateboard",
     "title": "Skateboard",
     "cover": "projects/skateboard/images/3d-printed.webp",
-    "category":"engineering-ii"
+    "category":"engineering-ii",
+    "date":"2025/06/30 - 2025/07/01"
   }
 ]
