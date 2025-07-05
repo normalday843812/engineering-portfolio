@@ -42,19 +42,24 @@
     scene.add(hemiLight);
 
     let banana;
-    const mtlLoader = new THREE.MTLLoader();
-    mtlLoader.load('./banana/Banana.mtl', (materials) => {
-      materials.preload();
+    const dracoLoader = new THREE.DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
 
-      const objLoader = new THREE.OBJLoader();
-      objLoader.setMaterials(materials);
-      objLoader.load('./banana/Banana.obj', (object) => {
-        object.scale.set(2.5, 2.5, 2.5);
-        banana = object;
+    const gltfLoader = new THREE.GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
+    gltfLoader.load(
+      './banana/Banana.glb',
+      (gltf) => {
+        banana = gltf.scene;
+        banana.scale.set(2.5, 2.5, 2.5);
         scene.add(banana);
         document.dispatchEvent(new Event('bananaLoaded'));
-      });
-    });
+      },
+      undefined,
+      (error) => {
+        console.error('Failed to load Banana.glb', error);
+      },
+    );
 
     let rafId;
     const animate = () => {
