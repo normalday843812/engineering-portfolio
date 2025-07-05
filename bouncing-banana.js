@@ -10,7 +10,7 @@ function initBouncingBanana() {
   banana.src = './assets/android-chrome-192x192.png';
   banana.alt = 'Bouncing banana - Click to play game!';
   banana.className = 'bouncing-banana';
-  
+
   banana.style.cssText = `
     position: absolute;
     width: 48px;
@@ -22,9 +22,12 @@ function initBouncingBanana() {
     transition: none;
     border-radius: 8px;
   `;
-  
-  document.body.appendChild(banana);
-  
+
+  footer.style.position = 'relative';
+  footer.style.overflow = 'hidden';
+
+  footer.appendChild(banana);
+
   let x, y, vx, vy;
   let rotation = 0;
   let isActive = true;
@@ -43,14 +46,14 @@ function initBouncingBanana() {
     },
     { passive: true },
   );
-  
+
   // Constants
   const gravity = 0.0;
   const bounce = 0.75;
   const friction = 0.995;
   const rotationSpeed = 8;
   const minVelocity = 0.5;
-  
+
   function getFooterBounds() {
     const rect = footer.getBoundingClientRect();
     return {
@@ -62,7 +65,7 @@ function initBouncingBanana() {
       height: rect.height,
     };
   }
-  
+
   function initPosition() {
     const bounds = getFooterBounds();
     x = bounds.left + Math.random() * (bounds.width - 48);
@@ -70,18 +73,20 @@ function initBouncingBanana() {
     vx = (Math.random() - 0.5) * 12;
     vy = (Math.random() - 0.5) * 8;
   }
-  
+
+  initPosition();
+
   // Animation loop
   function animate() {
     if (!isActive) return;
-    
+
     const bounds = getFooterBounds();
-    
+
     vy += gravity;
-    
+
     x += vx;
     y += vy;
-    
+
     if (x <= bounds.left) {
       x = bounds.left;
       vx = Math.abs(vx) * bounce;
@@ -91,7 +96,7 @@ function initBouncingBanana() {
       vx = -Math.abs(vx) * bounce;
       if (Math.abs(vx) < minVelocity) vx = -minVelocity * 2;
     }
-    
+
     if (y <= bounds.top) {
       y = bounds.top;
       vy = Math.abs(vy) * bounce;
@@ -101,7 +106,7 @@ function initBouncingBanana() {
       vy = -Math.abs(vy) * bounce;
       if (Math.abs(vy) < minVelocity) vy = -minVelocity * 2;
     }
-    
+
     const pushRadius = 80;
     if (mouseX !== null) {
       const centerX = x + 24;
@@ -127,19 +132,19 @@ function initBouncingBanana() {
 
     vx *= friction;
     vy *= friction;
-    
+
     if (Math.abs(vx) < minVelocity && Math.abs(vy) < minVelocity) {
       vx += (Math.random() - 0.5) * 3;
       vy += (Math.random() - 0.5) * 2;
     }
-    
+
     const speed = Math.sqrt(vx * vx + vy * vy);
     rotation += rotationSpeed * (speed / 10);
-    
-    banana.style.left = x + 'px';
-    banana.style.top = y + 'px';
+
+    banana.style.left = x - bounds.left + 'px';
+    banana.style.top = y - bounds.top + 'px';
     banana.style.transform = `rotate(${rotation}deg)`;
-    
+
     requestAnimationFrame(animate);
   }
 
@@ -147,50 +152,35 @@ function initBouncingBanana() {
     e.preventDefault();
     vx += (Math.random() - 0.5) * 15;
     vy -= Math.random() * 10 + 5;
-    
+
     setTimeout(() => {
       window.location.href = 'https://normalday843812.github.io/engineering-portfolio/game.html';
     }, 150);
   });
-  
+
   banana.addEventListener('mouseenter', () => {
     banana.style.filter = 'brightness(1.2) drop-shadow(0 0 10px rgba(255, 183, 66, 0.5))';
     banana.style.transform += ' scale(1.1)';
   });
-  
+
   banana.addEventListener('mouseleave', () => {
-    banana.style.filter = 'none';
-    banana.style.transform = `rotate(${rotation}deg) scale(1)`;
+    banana.style.filter = '';
   });
-  
-  function handleResize() {
-    const bounds = getFooterBounds();
-    x = Math.max(bounds.left, Math.min(bounds.right - 48, x));
-    y = Math.max(bounds.top, Math.min(bounds.bottom - 48, y));
-  }
-  
-  window.addEventListener('resize', handleResize, { passive: true });
-  
-  // Cleanup function
-  function destroy() {
-    isActive = false;
-    banana.remove();
-    window.removeEventListener('resize', handleResize);
-    // No scroll listener any more
-  }
-  
-  initPosition();
-  animate();
-  
-  const instance = {
-    destroy,
-    reset: () => {
-      initPosition();
-      rotation = 0;
+
+  isActive = true;
+  requestAnimationFrame(animate);
+
+  window.__bouncingBananaInstance = {
+    banana,
+    destroy() {
+      isActive = false;
+      banana.remove();
+      delete window.__bouncingBananaInstance;
     },
-    element: banana
   };
 
-  window.__bouncingBananaInstance = instance;
-  return instance;
+  return window.__bouncingBananaInstance;
 }
+
+// Initialise automatically at script load
+initBouncingBanana();
