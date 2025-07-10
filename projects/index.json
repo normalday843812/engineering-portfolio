@@ -1,5 +1,12 @@
 [
   {
+    "id": "bpe-tokenizer",
+    "title": "BPE Tokenizer",
+    "cover": "",
+    "category":"personal-projects",
+    "date":"2025/03/10"
+  },
+  {
     "id": "ping-pong-paddle",
     "title": "Ping Pong Paddle",
     "cover": "projects/ping-pong-paddle/images/paddle-top.webp",
@@ -52,7 +59,7 @@
     "id": "corsair-competition",
     "title": "Corsair Component Competition",
     "cover": "projects/corsair-competition/images/render-front.webp",
-    "category":"Personal Projects",
+    "category":"personal-projects",
     "date":"2025/07/01 - 2025/07/02"
   },
   {
@@ -61,5 +68,19 @@
     "cover": "projects/electronics/images/cover.webp",
     "category":"engineering-ii",
     "date":"2025/07/03"
+  },
+  {
+    "id": "pig",
+    "title": "Minecraft Pig Datapack",
+    "cover": "",
+    "category":"personal-projects",
+    "date":"2025/02/06 - 2025/02/13"
+  },
+  {
+    "id": "arduino",
+    "title": "Arduino",
+    "cover": "projects/arduino/images/tinkercad.webp",
+    "category":"engineering-ii",
+    "date":"2025/07/07 - "
   }
 ]

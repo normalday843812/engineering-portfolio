@@ -20,7 +20,7 @@
 3. Yellow spray paint
 
 ## Designing
-First, we measured our original Punahou IDs. We inserted these measurements into a CAD program (Onshape). We added filets onto the edges to smooth it out, then imported the sketch into Adobe Illustrator for laser cutting the wood. I also added a design of myself with a hand drawn image, my ID card number, "KRLL", "YELLOW", an image of a plane, and my ID card's barcode.
+First, I measured my original Punahou ID. I inserted these measurements into a CAD program (Onshape). I added filets onto the edges to smooth it out, then imported the sketch into Adobe Illustrator for laser cutting the wood. I also added a design of myself with a hand drawn image, my ID card number, "KRLL", "YELLOW", an image of a plane, and my ID card's barcode.
 
 # Sustainability practices
-The wood we used was primarily sourced from Home Depot and City Mill. 
+The wood I used was primarily sourced from Home Depot and City Mill. 

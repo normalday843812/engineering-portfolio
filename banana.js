@@ -52,7 +52,11 @@
       (gltf) => {
         banana = gltf.scene;
         banana.scale.set(2.5, 2.5, 2.5);
+
+        positionBanana();
+
         scene.add(banana);
+
         document.dispatchEvent(new Event('bananaLoaded'));
       },
       undefined,
@@ -95,13 +99,6 @@
       
       banana.position.set(x, y, z);
     }
-
-    const checkReady = setInterval(() => {
-      if (banana) {
-        positionBanana();
-        clearInterval(checkReady);
-      }
-    }, 50);
 
     function onResize() {
       camera.aspect = container.clientWidth / container.clientHeight;
