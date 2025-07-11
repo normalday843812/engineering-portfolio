@@ -189,6 +189,7 @@
     if (!modal) return;
 
     const modalImage = modal.querySelector('.modal-image');
+    const imageFrame = modal.querySelector('.image-frame');
     const modalTitle = modal.querySelector('.modal-title');
     const modalDesc = modal.querySelector('.modal-description');
     const modalCaption = modal.querySelector('.modal-caption');
@@ -212,9 +213,44 @@
         : images.map(() => '');
       current = 0;
 
+      // Determine a consistent aspect-ratio for this project based on
+      // the largest width and height across all its images. This
+      // avoids layout jumps without arbitrarily cropping anything.
+      (function setFrameRatio() {
+        let maxW = 0;
+        let maxH = 0;
+        let loaded = 0;
+        const total = images.length;
+
+        images.forEach((src) => {
+          const tmp = new Image();
+          tmp.onload = () => {
+            if (tmp.naturalWidth && tmp.naturalHeight) {
+              if (tmp.naturalWidth > maxW) maxW = tmp.naturalWidth;
+              if (tmp.naturalHeight > maxH) maxH = tmp.naturalHeight;
+            }
+            loaded += 1;
+            if (loaded === total && imageFrame) {
+              imageFrame.style.setProperty(
+                '--modal-aspect-ratio',
+                `${maxW} / ${maxH}`,
+              );
+            }
+          };
+          tmp.src = src;
+        });
+      })();
+
       const updateSlide = () => {
-        modalImage.src = images[current];
+
+        const src = images[current];
+        modalImage.src = src;
         modalImage.alt = `${title} screenshot ${current + 1}`;
+
+        // Update blurred backdrop using CSS variable
+        if (imageFrame) {
+          imageFrame.style.setProperty('--bg', `url("${src}")`);
+        }
         const cap = captions[current] || '';
         modalCaption.textContent = cap;
         modalCaption.style.display = cap ? 'block' : 'none';

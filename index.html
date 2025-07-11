@@ -134,12 +134,11 @@
 
     <!-- Project Modal -->
     <dialog id="project-modal" class="project-modal">
-      <button class="modal-close" aria-label="Close details">
-        <i class="bi bi-x-lg"></i>
-      </button>
       <div class="modal-content">
         <button class="carousel-nav prev" aria-label="Previous image"><i class="bi bi-chevron-left"></i></button>
-        <img src="" alt="Project screenshot" class="modal-image" />
+        <div class="image-frame">
+          <img src="" alt="Project screenshot" class="modal-image" />
+        </div>
         <button class="carousel-nav next" aria-label="Next image"><i class="bi bi-chevron-right"></i></button>
         <div class="modal-body">
           <h3 class="modal-title"></h3>
@@ -151,6 +150,9 @@
           </div>
         </div>
       </div>
+      <button class="modal-close" aria-label="Close details">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </dialog>
 
 
@@ -175,7 +177,7 @@
           <i class="bi bi-code-slash"></i>
           <h3>Programming</h3>
           <p>
-            Check out my <a href="https://github.com/normalday843812/">GitHub</a>
+            Check out my <a href="https://github.com/normalday843812/" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
           </p>
         </div>
       </div>
