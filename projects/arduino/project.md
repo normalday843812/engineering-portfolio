@@ -5,6 +5,14 @@ For this project, I had to use my programming knowledge to code in C family lang
 ## RGB LED
 To start, I hooked up a simple RGB LED to the arduino. Later, I put in a joystick to control which colours it outputted.
 
+<div style="position: relative; width: 100%; padding-top: 56.25%;">
+  <video
+    src="https://github.com/normalday843812/engineering-portfolio/raw/refs/heads/main/projects/arduino/videos/rgb-led-testing.mp4"
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 16px;"
+    controls
+  ></video>
+</div>
+
 ## Data Display
 I was able to design a working temperature and humidity display that you could toggle between metric and imperial units using 4x7 segment displays.
 
@@ -27,5 +35,42 @@ Using the arduino, an IR sensor, a transistor, and a passive buzzer, I was able 
   ></video>
 </div>
 
-Buzzer repo: <a href="https://github.com/normalday843812/buzzer-arduino" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a> <br>
-Data display repo: <a href="https://github.com/normalday843812/data-display-arduino" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a>
+Song Player repo: <a href="https://github.com/normalday843812/buzzer-arduino" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a> <br>
+Data display repo: <a href="https://github.com/normalday843812/data-display-arduino" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a><br>
+RGB LED code:
+```C++
+const int joyStickX = A1;
+const int joyStickY = A0;
+const int joyStickButton = 2;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(11, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(9, OUTPUT);
+
+  pinMode(joyStickButton, INPUT_PULLUP);
+}
+
+void loop() {
+  int xValue = analogRead(joyStickX);
+  int yValue = analogRead(joyStickY);
+  int buttonState = digitalRead(joyStickButton);
+
+  float redValue = static_cast<float>(xValue) / 4.0f;
+  float blueValue = static_cast<float>(yValue) / 4.0f;
+  int greenValue = buttonState ? LOW : 255;
+
+  analogWrite(11, redValue);
+  analogWrite(10, greenValue);
+  analogWrite(9, blueValue);
+
+  Serial.print("X: ");
+  Serial.print(xValue);
+  Serial.print(" | Y: ");
+  Serial.print(yValue);
+  Serial.print(" | Button: ");
+  Serial.println(buttonState);
+  delay(150);
+}
+```

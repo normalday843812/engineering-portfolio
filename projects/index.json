@@ -2,7 +2,7 @@
   {
     "id": "bpe-tokenizer",
     "title": "BPE Tokenizer",
-    "cover": "",
+    "cover": "projects/bpe-tokenizer/images/cover.webp",
     "category":"personal-projects",
     "date":"2025/03/10"
   },
@@ -72,7 +72,7 @@
   {
     "id": "pig",
     "title": "Minecraft Pig Datapack",
-    "cover": "",
+    "cover": "https://placehold.co/600x400/c8c4c4/FFFFFF.webp",
     "category":"personal-projects",
     "date":"2025/02/06 - 2025/02/13"
   },
@@ -81,6 +81,20 @@
     "title": "Arduino",
     "cover": "projects/arduino/images/tinkercad.webp",
     "category":"engineering-ii",
-    "date":"2025/07/07 - "
+    "date":"2025/07/07 - 2025/07/17"
+  },
+  {
+    "id": "independent-project",
+    "title": "Independent Project",
+    "cover": "projects/independent-project/images/cover.webp",
+    "category":"engineering-ii",
+    "date":"2025/07/07 - 2025/07/17"
+  },
+  {
+    "id": "gridfinity",
+    "title": "Gridfinity",
+    "cover": "projects/gridfinity/images/battery-cad.webp",
+    "category":"engineering-ii",
+    "date":"2025/07/17 - 2025/07/18"
   }
 ]
