@@ -126,5 +126,13 @@
     "category":"personal-projects",
     "date":"2024/10/07 - 2024/12/24",
     "participation-hr":25
+  },
+  {
+    "id": "sigma-chat",
+    "title": "SigmaChat",
+    "cover": "projects/sigma-chat/images/identity.webp",
+    "category":"personal-projects",
+    "date":"2024/10/07 - 2024/12/24",
+    "participation-hr":25
   }
 ]
