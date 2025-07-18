@@ -1,10 +1,7 @@
 # Electrical Circuits
 
-
-    
-
 ## Learning Objectives
-For this project, I first had to learn the principles of electronic circuits, such as Ohm's Law (V=IR). We also had to learn how to solder properly and troubleshoot PCBs that didn't work.
+For this project, I first had to learn the principles of electronic circuits, such as Ohm's Law (V=IR) and circuits in series vs. parallel. I also had to learn how to solder properly and troubleshoot PCBs that didn't work.
 
 ## Circuits
 

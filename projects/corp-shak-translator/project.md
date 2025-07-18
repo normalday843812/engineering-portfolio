@@ -1,0 +1,8 @@
+# Corporate to Shakespearean Translator
+This was a simple streamlit run app that used the OpenAI API to translate between corporate and shakesperean. It was a good test of applying what I had learnt about Python and the OpenAI API.
+
+## Original Idea
+At first, I tried to distill my own efficient model down from OpenAI LM responses. I approached this by first creating a prompt, I think almost exactly like the one used in the final streamlit file. Then I used this prompt and two OpenAI Batch API requests to take normal text from a dataset and, for each example, it would translate it into a Shakesperean English counterpart and a corporate English counterpart. I used the cheapest model available at the time which was gpt-4.1-nano. There were some errors in formatting which was corrected by a post processing script. There were also some grammatical errors, especially in how certain words were used in the Shakesperean counterpart, but it was decent enough for my use case. I fine-tuned the [t5-base](https://huggingface.co/google-t5/t5-base) model from Google locally on my GPU on the dataset I made. It was able to train decently and stop early when it began overfitting. I'll put the model in a Huggingface repo here eventually. <br><br>
+Despite this working well, this was originally for an English project with a live demonstration in class. The t5-base model was quite small, but ran slowly on my school computer. I found that simply using the OpenAI API was quicker and offered higher quality output.
+
+Repository: <a href="https://github.com/normalday843812/quest-project-artefact.git" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="bi bi-github"></i></a><br>

@@ -23,7 +23,7 @@ For the teleop, we decided upon a claw for the brick and the ball. However, we e
 
 We were able to get 1st place in both the normal competition and the battlebots tournament. The robot did consistently very well in teleop and in the first two rounds of autonomous. 
 
-We added weights for the battle bots tournament, had a good centre of mass, and lots of torque in our motors which allowed us to push the other bots off.
+We added weights for the battle bots tournament, had a good centre of mass, and lots of torque in our motors which allowed us to push off the other bots.
 
 ## Challenges
 

@@ -67,14 +67,14 @@
     "title": "Electronics Projects",
     "cover": "projects/electronics/images/cover.webp",
     "category":"engineering-ii",
-    "date":"2025/07/03"
+    "date":"2025/07/03 - 2025/07/17"
   },
   {
     "id": "pig",
     "title": "Minecraft Pig Datapack",
     "cover": "https://placehold.co/600x400/c8c4c4/FFFFFF.webp",
     "category":"personal-projects",
-    "date":"2025/02/06 - 2025/02/13"
+    "date":"2025/02/04 - 2025/02/13"
   },
   {
     "id": "arduino",
@@ -96,5 +96,35 @@
     "cover": "projects/gridfinity/images/battery-cad.webp",
     "category":"engineering-ii",
     "date":"2025/07/17 - 2025/07/18"
+  },
+  {
+    "id": "donut-c-in-js",
+    "title": "donut.c in JavaScript",
+    "cover": "projects/donut-c-in-js/images/cover.webp",
+    "category":"personal-projects",
+    "date":"2024/07/18 - 2024/08/14"
+  },
+  {
+    "id": "corp-shak-translator",
+    "title": "Corporate to Shakesperean Translator",
+    "cover": "projects/corp-shak-translator/images/cover.webp",
+    "category":"personal-projects",
+    "date":"2025/05/15 - 2025/05/20"
+  },
+  {
+    "id": "isolated-isles",
+    "title": "Isolated Isles",
+    "cover": "projects/isolated-isles/images/cover.webp",
+    "category":"personal-projects",
+    "date":"2024/11/03 - 2024/11/23",
+    "participation-hr":15
+  },
+  {
+    "id": "ftc-24-25",
+    "title": "FTC Into The Deep",
+    "cover": "projects/ftc-24-25/images/robot.webp",
+    "category":"personal-projects",
+    "date":"2024/10/07 - 2024/12/24",
+    "participation-hr":25
   }
 ]
