@@ -509,8 +509,7 @@ section[id] {
 
 h1,
 h2,
-h3,
-h4 {
+h3 {
   font-family: var(--font-display);
   font-weight: 700;
 }
@@ -789,21 +788,8 @@ footer {
 p,
 h1,
 h2,
-h3,
-h4,
-h5,
-h6 {
+h3 {
   user-select: text;
-}
-
-.banana-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  pointer-events: none;
 }
 
 /* legacy #navbar styles removed after redesign */
@@ -881,33 +867,5 @@ h6 {
   100% {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@-webkit-keyframes fadeInEffect {
-  0% {
-    opacity: 0;
-  }
-
-  25% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInEffect {
-  0% {
-    opacity: 0;
-  }
-
-  25% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
   }
 }
